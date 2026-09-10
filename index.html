@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Manifesto Musical - Brasília - Guiche Web</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+
+  <!-- SEO & Open Graph -->
+  <meta name="description" content="Manifesto Musical - Brasília | 12/09/2026 | Arena Mané Garrincha - BRASILIA/DF. Compre seus ingressos na Guichê Web.">
+  <meta name="keywords" content="Manifesto Musical, Brasília, Henrique e Juliano, Arena Mané Garrincha, Ingressos, Guiche Web">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Manifesto Musical - Brasília - Guiche Web">
+  <meta property="og:description" content="Manifesto Musical - Brasília | 12/09/2026 | Arena Mané Garrincha - BRASILIA/DF. Compre seus ingressos na Guichê Web.">
+  <meta property="og:image" content="assets/banner.png">
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP NAVIGATION BAR
+       ======================================================================== -->
+  <header class="gw-navbar">
+    <div class="gw-container">
+      <div class="gw-nav-inner">
+        <div class="gw-nav-left">
+          <a href="#" class="gw-logo" title="Guichê Web">
+            <img src="assets/logogw.png" alt="Guichê Web Logo">
+          </a>
+
+          <div class="gw-search-bar">
+            <input type="text" id="gw-search-input" placeholder="Faça sua pesquisa..." autocomplete="off">
+            <button type="button" title="Pesquisar"><i class="fas fa-search"></i></button>
+          </div>
+
+          <div class="gw-city-badge" title="Selecionar cidade">
+            <i class="fas fa-map-marker-alt" style="color: #ff5722;"></i>
+            <span>Brasília/DF</span>
+            <i class="fas fa-chevron-down" style="font-size: 10px; color: #888;"></i>
+          </div>
+        </div>
+
+        <div class="gw-nav-right">
+          <div class="gw-nav-item" title="Minha Conta">
+            <i class="fas fa-user-circle"></i>
+            <span>Entre ou Cadastre-se</span>
+          </div>
+
+          <button type="button" class="gw-cart-btn" id="gw-nav-cart-btn" title="Carrinho de Compras">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Carrinho</span>
+            <span class="gw-cart-badge" id="gw-cart-badge" style="display: none;">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       HERO SECTION - EVENT DETAILS & CONCERT STAGE
+       ======================================================================== -->
+  <section class="gw-hero-section">
+    <div class="gw-container">
+      <div class="gw-hero-grid">
+        <!-- Event Poster & Share -->
+        <div class="gw-poster-col">
+          <div class="gw-poster-card">
+            <img src="assets/banner.png" alt="Manifesto Musical Brasília - Henrique & Juliano">
+            <div class="gw-share-bar">
+              <span class="gw-share-title">Compartilhar:</span>
+              <div class="gw-share-icon whatsapp" data-share="whatsapp" title="Compartilhar no WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+              </div>
+              <div class="gw-share-icon facebook" data-share="facebook" title="Compartilhar no Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </div>
+              <div class="gw-share-icon x-twitter" data-share="x-twitter" title="Compartilhar no X">
+                <i class="fab fa-x-twitter"></i>
+              </div>
+              <div class="gw-share-icon copy-link" data-share="copy" title="Copiar link">
+                <i class="fas fa-link"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event Information -->
+        <div class="gw-hero-details">
+          <div class="gw-event-status-badge">
+            <i class="fas fa-fire"></i> TURNÊ EXCLUSIVA 2026
+          </div>
+
+          <h1 class="gw-event-title">Manifesto Musical - Brasília</h1>
+          <h2 class="gw-event-subtitle">Henrique & Juliano e Convidados</h2>
+
+          <div class="gw-meta-list">
+            <div class="gw-meta-item">
+              <i class="far fa-calendar-alt"></i>
+              <span><strong>Data:</strong> 12 de Setembro de 2026 (Sábado)</span>
+            </div>
+            <div class="gw-meta-item">
+              <i class="far fa-clock"></i>
+              <span><strong>Horário:</strong> Abertura dos portões às 18:00h | Show às 21:00h</span>
+            </div>
+            <div class="gw-meta-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span><strong>Local:</strong> Arena BRB Mané Garrincha - Asa Norte, Brasília/DF</span>
+            </div>
+            <div class="gw-meta-item">
+              <i class="fas fa-percentage"></i>
+              <span><strong>Taxa de Serviço:</strong> 13% na compra online</span>
+            </div>
+          </div>
+
+          <div class="gw-hero-actions">
+            <a href="#sec-ingressos" class="gw-btn-primary">
+              <i class="fas fa-ticket-alt"></i> Comprar Ingressos
+            </a>
+            <a href="#sec-mapa" class="gw-btn-outline">
+              <i class="fas fa-map"></i> Ver Mapa de Setores
+            </a>
+            <a href="https://www.instagram.com/manifestomusicaloficial/" target="_blank" class="gw-btn-outline" title="Instagram Oficial">
+              <i class="fab fa-instagram"></i> @manifestomusicaloficial
+            </a>
+          </div>
+
+          <div class="gw-producers-bar">
+            <span>Realização: <strong>DOIS.M & ORIGINAL R2</strong></span>
+            <span>•</span>
+            <span>Vendas Exclusivas: <strong>Guichê Web</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       STICKY QUICK JUMP NAVIGATION
+       ======================================================================== -->
+  <nav class="gw-subnav">
+    <div class="gw-container">
+      <div class="gw-subnav-links">
+        <button class="gw-tab-btn active" data-target="sec-ingressos">
+          <i class="fas fa-ticket-alt"></i> Ingressos
+        </button>
+        <button class="gw-tab-btn" data-target="sec-mapa">
+          <i class="fas fa-map-marked-alt"></i> Mapa do Estádio
+        </button>
+        <button class="gw-tab-btn" data-target="sec-localizacao">
+          <i class="fas fa-location-arrow"></i> Localização
+        </button>
+        <button class="gw-tab-btn" data-target="sec-pdvs">
+          <i class="fas fa-store"></i> Pontos de Venda
+        </button>
+        <button class="gw-tab-btn" data-target="sec-info">
+          <i class="fas fa-info-circle"></i> Informações & FAQ
+        </button>
+        <button class="gw-tab-btn" data-target="sec-meia">
+          <i class="fas fa-id-card"></i> Meia-Entrada
+        </button>
+        <button class="gw-tab-btn" data-target="sec-video">
+          <i class="fab fa-youtube"></i> Vídeo Oficial
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       MAIN PAGE CONTENT
+       ======================================================================== -->
+  <main class="gw-main-content">
+    <div class="gw-container">
+
+      <!-- ==================================================================
+           SECTOR MAP SECTION
+           ================================================================== -->
+      <section id="sec-mapa" class="gw-section">
+        <div class="gw-section-header">
+          <h2 class="gw-section-title">
+            <i class="fas fa-map-marked-alt"></i> Mapa Oficial de Setores da Arena Mané Garrincha
+          </h2>
+          <button type="button" class="gw-btn-outline" id="gw-open-map-lightbox" style="color: #333; border-color: #cbd5e1; font-size: 13px; padding: 6px 14px;">
+            <i class="fas fa-search-plus"></i> Ampliar Mapa
+          </button>
+        </div>
+
+        <div class="gw-map-card">
+          <img src="assets/mapa.jpg" alt="Mapa de Setores Arena Mané Garrincha Manifesto Musical" id="gw-map-img">
+          <div class="gw-map-overlay-btn" id="gw-map-overlay-trigger">
+            <i class="fas fa-expand"></i> Clique para ampliar
+          </div>
+        </div>
+
+        <div class="gw-sector-legend">
+          <div class="gw-legend-item">
+            <div class="gw-legend-color" style="background: #90132d;"></div>
+            <span>LOUNGES / CAMAROTE R2</span>
+          </div>
+          <div class="gw-legend-item">
+            <div class="gw-legend-color" style="background: #e28cb0;"></div>
+            <span>CAMAROTE OPEN</span>
+          </div>
+          <div class="gw-legend-item">
+            <div class="gw-legend-color" style="background: #0056b3;"></div>
+            <span>FRONT STAGE</span>
+          </div>
+          <div class="gw-legend-item">
+            <div class="gw-legend-color" style="background: #008f7a;"></div>
+            <span>ARQUIBANCADA INFERIOR</span>
+          </div>
+          <div class="gw-legend-item">
+            <div class="gw-legend-color" style="background: #d4a017;"></div>
+            <span>ARQUIBANCADA SUPERIOR</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           TICKETS & SECTORS SELECTION
+           ================================================================== -->
+      <section id="sec-ingressos" class="gw-section">
+        <div class="gw-section-header">
+          <h2 class="gw-section-title">
+            <i class="fas fa-ticket-alt"></i> Seleção de Ingressos e Setores
+          </h2>
+          <button type="button" class="gw-status-toggle" id="gw-toggle-mode">
+            <i class="fas fa-eye"></i> Visualizar Status Esgotado
+          </button>
+        </div>
+
+        <!-- Notification Banner -->
+        <div class="gw-status-banner">
+          <div>
+            <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
+            <span><strong>Aviso de Vendas:</strong> Vendas nominais. Limite máximo de até 6 ingressos por CPF.</span>
+          </div>
+          <span style="font-size: 12px; font-weight: bold; background: #fff; padding: 4px 10px; border-radius: 4px;">LOTE ATUAL</span>
+        </div>
+
+        <!-- DEMO TICKETS CONTAINER (INTERACTIVE) -->
+        <div id="gw-demo-tickets" class="gw-tickets-grid">
+
+          <!-- Camarote R2 Open Bar -->
+          <div class="gw-ticket-card">
+            <div class="gw-ticket-header">
+              <div class="gw-sector-name">
+                <i class="fas fa-crown" style="color: #90132d;"></i>
+                <span>CAMAROTE R2 (OPEN BAR PREMIUM)</span>
+              </div>
+              <span class="gw-sector-badge" style="background: #fce7f3; color: #9d174d;">18+ ANOS • OPEN BAR</span>
+            </div>
+            <div class="gw-ticket-body">
+              <p class="gw-ticket-features">
+                Estrutura exclusiva VIP. Open Bar completo com Cerveja, Gin, Vodka, Whisky, Energético, Água e Refrigerante. Praça de alimentação e banheiros privativos. Entrada proibida para menores de 18 anos, mesmo acompanhados.
+              </p>
+              <div class="gw-pricing-row">
+                <div class="gw-price-info">
+                  <span class="gw-ticket-type">Ingresso Individual (Lote 2)</span>
+                  <span class="gw-ticket-tax">+ taxa de conveniência de 13%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                  <span class="gw-price-val">R$ 480,00</span>
+                  <div class="gw-qty-counter">
+                    <button class="gw-qty-btn" data-action="minus" data-ticket="camarote_r2" disabled>-</button>
+                    <span class="gw-qty-num" id="qty-camarote_r2">0</span>
+                    <button class="gw-qty-btn" data-action="plus" data-ticket="camarote_r2">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Camarote Open -->
+          <div class="gw-ticket-card">
+            <div class="gw-ticket-header">
+              <div class="gw-sector-name">
+                <i class="fas fa-glass-cheers" style="color: #e28cb0;"></i>
+                <span>CAMAROTE OPEN</span>
+              </div>
+              <span class="gw-sector-badge" style="background: #fdf2f8; color: #be185d;">18+ ANOS</span>
+            </div>
+            <div class="gw-ticket-body">
+              <p class="gw-ticket-features">
+                Espaço coberto elevado com vista panorâmica para o palco, bares exclusivos com cerveja, drinks, água e refrigerante inclusos.
+              </p>
+              <div class="gw-pricing-row">
+                <div class="gw-price-info">
+                  <span class="gw-ticket-type">Ingresso Individual (Lote 2)</span>
+                  <span class="gw-ticket-tax">+ taxa de conveniência de 13%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                  <span class="gw-price-val">R$ 360,00</span>
+                  <div class="gw-qty-counter">
+                    <button class="gw-qty-btn" data-action="minus" data-ticket="camarote_open" disabled>-</button>
+                    <span class="gw-qty-num" id="qty-camarote_open">0</span>
+                    <button class="gw-qty-btn" data-action="plus" data-ticket="camarote_open">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Front Stage -->
+          <div class="gw-ticket-card">
+            <div class="gw-ticket-header">
+              <div class="gw-sector-name">
+                <i class="fas fa-star" style="color: #0056b3;"></i>
+                <span>FRONT STAGE</span>
+              </div>
+              <span class="gw-sector-badge" style="background: #eff6ff; color: #1d4ed8;">FRENTE DO PALCO</span>
+            </div>
+            <div class="gw-ticket-body">
+              <p class="gw-ticket-features">
+                Acesso à frente do palco e passarela dos artistas. Visão frontal dos shows, praça de alimentação e bares exclusivos no setor. Classificação 16 anos.
+              </p>
+              <div class="gw-pricing-row">
+                <div class="gw-price-info">
+                  <span class="gw-ticket-type">Ingresso Individual (Lote 1)</span>
+                  <span class="gw-ticket-tax">+ taxa de conveniência de 13%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                  <span class="gw-price-val">R$ 260,00</span>
+                  <div class="gw-qty-counter">
+                    <button class="gw-qty-btn" data-action="minus" data-ticket="front_stage" disabled>-</button>
+                    <span class="gw-qty-num" id="qty-front_stage">0</span>
+                    <button class="gw-qty-btn" data-action="plus" data-ticket="front_stage">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arquibancada Inferior -->
+          <div class="gw-ticket-card">
+            <div class="gw-ticket-header">
+              <div class="gw-sector-name">
+                <i class="fas fa-chair" style="color: #008f7a;"></i>
+                <span>ARQUIBANCADA INFERIOR</span>
+              </div>
+              <span class="gw-sector-badge" style="background: #ecfdf5; color: #047857;">CADEIRAS COBERTAS</span>
+            </div>
+            <div class="gw-ticket-body">
+              <p class="gw-ticket-features">
+                Cadeiras numeradas no anel inferior do estádio. Excelente conforto, área totalmente coberta e visão ampla para o palco.
+              </p>
+              <div class="gw-pricing-row">
+                <div class="gw-price-info">
+                  <span class="gw-ticket-type">Meia-Entrada / Ingresso Solidário (+ 1kg de alimento)</span>
+                  <span class="gw-ticket-tax">+ taxa de conveniência de 13%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                  <span class="gw-price-val">R$ 160,00</span>
+                  <div class="gw-qty-counter">
+                    <button class="gw-qty-btn" data-action="minus" data-ticket="arq_inferior_meia" disabled>-</button>
+                    <span class="gw-qty-num" id="qty-arq_inferior_meia">0</span>
+                    <button class="gw-qty-btn" data-action="plus" data-ticket="arq_inferior_meia">+</button>
+                  </div>
+                </div>
+              </div>
+              <div class="gw-pricing-row">
+                <div class="gw-price-info">
+                  <span class="gw-ticket-type">Inteira</span>
+                  <span class="gw-ticket-tax">+ taxa de conveniência de 13%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                  <span class="gw-price-val">R$ 320,00</span>
+                  <div class="gw-qty-counter">
+                    <button class="gw-qty-btn" data-action="minus" data-ticket="arq_inferior_inteira" disabled>-</button>
+                    <span class="gw-qty-num" id="qty-arq_inferior_inteira">0</span>
+                    <button class="gw-qty-btn" data-action="plus" data-ticket="arq_inferior_inteira">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arquibancada Superior -->
+          <div class="gw-ticket-card">
+            <div class="gw-ticket-header">
+              <div class="gw-sector-name">
+                <i class="fas fa-users" style="color: #d4a017;"></i>
+                <span>ARQUIBANCADA SUPERIOR</span>
+              </div>
+              <span class="gw-sector-badge" style="background: #fefce8; color: #a16207;">ECONÔMICO</span>
+            </div>
+            <div class="gw-ticket-body">
+              <p class="gw-ticket-features">
+                Visão panorâmica geral de todo o estádio e espetáculo de luzes. Excelente custo-benefício.
+              </p>
+              <div class="gw-pricing-row">
+                <div class="gw-price-info">
+                  <span class="gw-ticket-type">Meia-Entrada / Ingresso Solidário (+ 1kg de alimento)</span>
+                  <span class="gw-ticket-tax">+ taxa de conveniência de 13%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                  <span class="gw-price-val">R$ 90,00</span>
+                  <div class="gw-qty-counter">
+                    <button class="gw-qty-btn" data-action="minus" data-ticket="arq_superior_meia" disabled>-</button>
+                    <span class="gw-qty-num" id="qty-arq_superior_meia">0</span>
+                    <button class="gw-qty-btn" data-action="plus" data-ticket="arq_superior_meia">+</button>
+                  </div>
+                </div>
+              </div>
+              <div class="gw-pricing-row">
+                <div class="gw-price-info">
+                  <span class="gw-ticket-type">Inteira</span>
+                  <span class="gw-ticket-tax">+ taxa de conveniência de 13%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                  <span class="gw-price-val">R$ 180,00</span>
+                  <div class="gw-qty-counter">
+                    <button class="gw-qty-btn" data-action="minus" data-ticket="arq_superior_inteira" disabled>-</button>
+                    <span class="gw-qty-num" id="qty-arq_superior_inteira">0</span>
+                    <button class="gw-qty-btn" data-action="plus" data-ticket="arq_superior_inteira">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- OFFICIAL SOLDOUT CONTAINER -->
+        <div id="gw-soldout-tickets" class="gw-tickets-grid" style="display: none;">
+          <div class="gw-ticket-card" style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 54px; color: #ef4444; margin-bottom: 16px;">
+              <i class="fas fa-ban"></i>
+            </div>
+            <h3 style="font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">INGRESSOS ESGOTADOS</h3>
+            <p style="color: #64748b; max-width: 540px; margin: 0 auto 20px auto; font-size: 14.5px;">
+              Todos os lotes oficiais disponibilizados na plataforma Guichê Web para o Manifesto Musical em Brasília foram esgotados. Fique atento às redes sociais da organização para eventuais lotes extras ou cancelamentos.
+            </p>
+            <div class="gw-ticket-soldout-badge" style="font-size: 14px; padding: 8px 20px;">
+              <i class="fas fa-times-circle"></i> VENDAS ENCERRADAS PELA ORGANIZAÇÃO
+            </div>
+          </div>
+        </div>
+
+        <!-- Coupon input -->
+        <div class="gw-coupon-box">
+          <input type="text" id="gw-coupon-input" placeholder="Possui Cupom de Desconto?" autocomplete="off">
+          <button type="button" id="gw-apply-coupon">Aplicar Cupom</button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           LOCATION (GOOGLE MAPS)
+           ================================================================== -->
+      <section id="sec-localizacao" class="gw-section">
+        <div class="gw-section-header">
+          <h2 class="gw-section-title">
+            <i class="fas fa-map-marked-alt"></i> Localização do Evento
+          </h2>
+        </div>
+
+        <div class="gw-map-embed-wrapper">
+          <iframe 
+            src="https://maps.google.com/maps?q=SRPN+Arena+Mané+Garrincha+-+Asa+Norte,+Brasília+-+DF,+Brasil&center=-15.78356,-47.8992446&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+            allowfullscreen="" 
+            loading="lazy"
+            title="Mapa Google Arena Mané Garrincha">
+          </iframe>
+        </div>
+
+        <div class="gw-location-info-card">
+          <div class="gw-loc-text">
+            <h4>Arena BRB Mané Garrincha</h4>
+            <p><i class="fas fa-map-pin" style="color: #ff5722; margin-right: 6px;"></i> SRPN - Asa Norte, Brasília - DF, CEP: 70070-701</p>
+          </div>
+          <a href="https://maps.google.com/maps?q=Arena+BRB+Mané+Garrincha" target="_blank" class="gw-btn-outline" style="color: #333; border-color: #cbd5e1;">
+            <i class="fas fa-directions"></i> Traçar Rota
+          </a>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           PHYSICAL POINTS OF SALE (PDVS)
+           ================================================================== -->
+      <section id="sec-pdvs" class="gw-section">
+        <div class="gw-section-header">
+          <h2 class="gw-section-title">
+            <i class="fas fa-store"></i> Pontos de Venda Físicos Autorizados (PDVs)
+          </h2>
+        </div>
+
+        <div class="gw-pdv-grid">
+          <!-- Ponto 1 (Oficial R2/HeJ) -->
+          <div class="gw-pdv-card">
+            <div class="gw-pdv-card-header">
+              <i class="fas fa-city"></i> RIO VERDE / GO
+            </div>
+            <div class="gw-pdv-card-body">
+              <h5>Produção Bruna - HeJ</h5>
+              <p>Shopping Buriti - Rio Verde/GO</p>
+              <span class="badge-tax">SEM TAXA DE CONVENIÊNCIA</span>
+            </div>
+          </div>
+
+          <!-- Ponto 2 (Brasília) -->
+          <div class="gw-pdv-card">
+            <div class="gw-pdv-card-header">
+              <i class="fas fa-city"></i> BRASÍLIA / DF
+            </div>
+            <div class="gw-pdv-card-body">
+              <h5>Óticas Diniz - Brasília Shopping</h5>
+              <p>SCN Quadra 05 Bloco A - Asa Norte</p>
+              <span class="badge-tax" style="background: #f1f5f9; color: #475569;">SUJEITO A TAXA LOCAL</span>
+            </div>
+          </div>
+
+          <!-- Ponto 3 (Taguatinga) -->
+          <div class="gw-pdv-card">
+            <div class="gw-pdv-card-header">
+              <i class="fas fa-city"></i> TAGUATINGA / DF
+            </div>
+            <div class="gw-pdv-card-body">
+              <h5>Óticas Diniz - Taguatinga Shopping</h5>
+              <p>QS 01 Rua 210, Lote 40 - Taguatinga Sul</p>
+              <span class="badge-tax" style="background: #f1f5f9; color: #475569;">SUJEITO A TAXA LOCAL</span>
+            </div>
+          </div>
+
+          <!-- Ponto 4 (Bilheteria Arena) -->
+          <div class="gw-pdv-card">
+            <div class="gw-pdv-card-header">
+              <i class="fas fa-city"></i> BRASÍLIA / DF
+            </div>
+            <div class="gw-pdv-card-body">
+              <h5>Bilheteria Oficial Arena Mané Garrincha</h5>
+              <p>Portão Leste (Apenas no dia do evento mediante disponibilidade)</p>
+              <span class="badge-tax">SEM TAXA DE CONVENIÊNCIA</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           FAQ & EVENT INFORMATIONS
+           ================================================================== -->
+      <section id="sec-info" class="gw-section">
+        <div class="gw-section-header">
+          <h2 class="gw-section-title">
+            <i class="fas fa-question-circle"></i> Informações Gerais e Dúvidas Frequentes
+          </h2>
+        </div>
+
+        <div class="gw-faq-list">
+
+          <!-- FAQ 1 -->
+          <div class="gw-faq-item open">
+            <div class="gw-faq-question">
+              <span>1. Será permitida a entrada de menores acompanhados e com autorização?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> No camarote Open Bar a entrada é restrita para maiores de 18 anos. Proibida a entrada de menores, mesmo que acompanhados.<br><br>
+              Nos demais setores a classificação indicativa é de 16 anos. Menores de 16 anos devem estar acompanhados dos pais e/ou responsáveis legais. Nos demais casos somente será permitida a entrada com um maior de 18 anos, com autorização reconhecida em cartório em duas vias.
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>2. Quais alimentos serão aceitos na portaria com ingresso solidário?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Os alimentos aceitos serão os classificados como não perecíveis, ou seja, todos aqueles que vêm embalados de fábrica e têm longa duração (ex: arroz, feijão, macarrão). Por gentileza atentar-se ao prazo de validade.
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>3. Qual horário de abertura dos portões do evento?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Abertura dos portões prevista para as 18 horas.
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>4. Qual horário previsto para início dos shows?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Shows principais a partir das 21:00h. Os horários detalhados de cada atração serão divulgados nas redes sociais oficiais próximo à data do evento.
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>5. Como faço para me cadastrar no site?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Quando você efetua sua primeira compra no site, automaticamente, antes de efetuar o pagamento, aparecerá a opção para você se cadastrar ou efetuar login com seus dados e CPF.
+            </div>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>6. É necessário alterar a titularidade do ingresso?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Caso o titular da compra esteja junto dos dependentes/acompanhantes no momento do acesso, não é obrigatória a alteração. Caso deseje nomear os ingressos previamente, acesse o painel "Meus Pedidos" na sua conta Guichê Web.
+            </div>
+          </div>
+
+          <!-- FAQ 7 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>7. Terá estacionamento no local?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Sim, serviço terceirizado no complexo do estádio. A produção do evento não se responsabiliza por veículos deixados nos arredores. Aconselhamos a utilização de transporte por aplicativo ou táxi.
+            </div>
+          </div>
+
+          <!-- FAQ 8 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>8. É permitida a entrada com copos térmicos ou canecas?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Não será permitida a entrada com copos, taças, garrafas ou canecas térmicas de qualquer material.
+            </div>
+          </div>
+
+          <!-- FAQ 9 -->
+          <div class="gw-faq-item">
+            <div class="gw-faq-question">
+              <span>9. Terá área exclusiva para PCD?</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="gw-faq-answer">
+              <strong>R.</strong> Sim, haverá área exclusiva e adaptada para Pessoas com Deficiência (PCD) e seus respectivos acompanhantes legais.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Important notice alert -->
+        <div class="gw-alert-box">
+          <h5><i class="fas fa-shield-alt"></i> INFORMAÇÕES IMPORTANTES DE SEGURANÇA E IMAGEM:</h5>
+          <p>
+            • <strong>Gravação do Evento:</strong> Este evento poderá ser gravado, filmado ou fotografado. Ao participar do evento, o portador do ingresso concorda e autoriza a utilização gratuita de sua imagem por prazo indeterminado em todos os canais de divulgação da produção e artistas.<br>
+            • <strong>Itens Proibidos:</strong> É expressamente proibida a entrada com copos, latas, cadeiras, bancos, objetos pontiagudos e/ou cortantes, guarda-chuvas, armas de fogo, dispositivos explosivos, recipientes de vidro e/ou metal, drones e itens de publicidade não autorizada (marketing de emboscada).<br>
+            • <strong>Pertences Pessoais:</strong> Cuide dos seus pertences, a organização não se responsabiliza por objetos perdidos ou esquecidos durante o evento.<br>
+            • <strong>Atendimento Oficial:</strong> Dúvidas adicionais pelo e-mail: <code>atendimento.manifesto@r2.com.vc</code>.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           MEIA-ENTRADA & REGRAS LEGAIS
+           ================================================================== -->
+      <section id="sec-meia" class="gw-section">
+        <div class="gw-section-header">
+          <h2 class="gw-section-title">
+            <i class="fas fa-id-card"></i> Política Oficial de Meia-Entrada
+          </h2>
+        </div>
+
+        <div class="gw-legal-box">
+          <h4>POLÍTICA DE MEIA-ENTRADA (Lei Federal nº 12.933/2013 e Decreto nº 8.537/2015)</h4>
+          <p>
+            De acordo com o decreto nº 8.537 de 5 de outubro de 2015 que regulamenta a nova lei da meia-entrada e o Estatuto da Juventude (Lei nº 12.852/2013), a concessão do benefício da meia-entrada é assegurada em 40% (quarenta por cento) do total dos ingressos disponíveis para cada evento artístico e cultural.
+          </p>
+
+          <h4>QUEM TEM DIREITO:</h4>
+          <ul>
+            <li><strong>Estudantes:</strong> Carteira de Identificação Estudantil (CIE) emitida pela ANPG, UNE, UBES, DCEs ou Centros Acadêmicos conforme modelo padronizado nacional com QR-Code e validade até 31 de março do ano subsequente.</li>
+            <li><strong>Idosos:</strong> Pessoas com idade igual ou superior a 60 anos, mediante apresentação de documento oficial de identidade com foto (Lei Federal nº 10.741/2003 - Estatuto do Idoso).</li>
+            <li><strong>Pessoas com Deficiência (PCD):</strong> Cartão de Benefício de Prestação Continuada (BPC) ou documento do INSS atestando a aposentadoria especial, acompanhado de documento de identidade com foto.</li>
+            <li><strong>Jovens de Baixa Renda:</strong> Jovens de 15 a 29 anos inscritos no Cadastro Único (CadÚnico) do Governo Federal, portando a carteirinha ID Jovem emitida pela Secretaria Nacional da Juventude.</li>
+            <li><strong>Doadores Regulares de Sangue:</strong> Registrados nos bancos de sangue oficiais e hemocentros estaduais, com apresentação de carteirinha comprobatória.</li>
+            <li><strong>Professores e Profissionais de Educação:</strong> Conforme legislação distrital/estadual específica com apresentação de carteira funcional ou holerite recente acompanhado de documento com foto.</li>
+          </ul>
+
+          <h4>REGRAS DE CANCELAMENTO E REEMBOLSO:</h4>
+          <p>
+            O cancelamento da compra online pode ser solicitado em até 7 (sete) dias corridos após a confirmação da compra, desde que a solicitação seja realizada com até 48 (quarenta e oito) horas de antecedência em relação ao início do evento, em observância ao Artigo 49 do Código de Defesa do Consumidor (CDC).
+          </p>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           OFFICIAL VIDEO
+           ================================================================== -->
+      <section id="sec-video" class="gw-section">
+        <div class="gw-section-header">
+          <h2 class="gw-section-title">
+            <i class="fab fa-youtube" style="color: #ff0000;"></i> Vídeo Oficial - Henrique & Juliano
+          </h2>
+        </div>
+
+        <div class="gw-video-wrapper">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/B-Cmf90Xk2A" 
+            title="Henrique e Juliano - Manifesto Musical" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           PRODUCER / ORGANIZER
+           ================================================================== -->
+      <section class="gw-section">
+        <div class="gw-producer-card">
+          <div class="gw-producer-info">
+            <h5>Organizador Oficial: R2B PRODUCOES E EVENTOS SPE LTDA</h5>
+            <p>CNPJ: 63.643.874/0001-87 • BRASÍLIA/DF • Plataforma Exclusiva de Venda: Guichê Web</p>
+          </div>
+          <a href="https://www.guicheweb.com.br" target="_blank" class="gw-btn-outline" style="color: #333; border-color: #cbd5e1; font-size: 13px;">
+            Ver Mais Eventos do Produtor
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       STICKY BOTTOM CART DRAWER
+       ======================================================================== -->
+  <aside class="gw-cart-bar" id="gw-cart-bar">
+    <div class="gw-container">
+      <div class="gw-cart-bar-inner">
+        <div class="gw-cart-summary">
+          <div class="gw-cart-items-count">
+            <span id="gw-cart-items-count">0 INGRESSOS</span> NO CARRINHO
+          </div>
+          <div class="gw-cart-total-block">
+            <span class="gw-cart-total-val" id="gw-cart-total-val">R$ 0,00</span>
+            <span class="gw-cart-fee-val" id="gw-cart-fee-val">Taxa de serviço (13%): R$ 0,00</span>
+          </div>
+        </div>
+
+        <button type="button" class="gw-btn-checkout" id="gw-btn-checkout">
+          CONTINUAR <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="gw-footer">
+    <div class="gw-container">
+      <div class="gw-footer-grid">
+
+        <!-- Coluna 1: Institucional -->
+        <div class="gw-footer-col">
+          <h4>Institucional</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Contato</a></li>
+            <li><a href="#">Nossa Marca</a></li>
+            <li><a href="#">Blog Guichê Web</a></li>
+          </ul>
+        </div>
+
+        <!-- Coluna 2: Minha Conta -->
+        <div class="gw-footer-col">
+          <h4>Minha Conta</h4>
+          <ul>
+            <li><a href="#">Meus Pedidos</a></li>
+            <li><a href="#">Alterar Senha</a></li>
+            <li><a href="#">Lembrar Senha</a></li>
+            <li><a href="#">Cadastre-se</a></li>
+          </ul>
+        </div>
+
+        <!-- Coluna 3: Ajuda -->
+        <div class="gw-footer-col">
+          <h4>Ajuda</h4>
+          <ul>
+            <li><a href="#">Dúvidas Frequentes</a></li>
+            <li><a href="#">Termos e Políticas</a></li>
+            <li><a href="#">Antifraude e Segurança</a></li>
+            <li><a href="#">Fale Conosco</a></li>
+          </ul>
+        </div>
+
+        <!-- Coluna 4: App & Selos -->
+        <div class="gw-footer-col">
+          <h4>Compre pelo App</h4>
+          <div class="gw-trust-seals">
+            <img src="assets/site_protegido.svg" alt="Selo Compra Segura">
+            <img src="assets/associado_abrape.svg" alt="Associado ABRAPE">
+          </div>
+          <div class="gw-app-badges">
+            <a href="https://itunes.apple.com/us/app/guich%C3%AA-web/id1322189354" target="_blank">
+              <img src="assets/app_store.png" alt="Baixe na App Store">
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=br.com.guicheweb" target="_blank">
+              <img src="assets/google_play.png" alt="Disponível no Google Play">
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Social and Legal Details -->
+      <div class="gw-footer-bottom">
+        <div class="gw-social-row">
+          <a href="https://www.instagram.com/guicheweb" target="_blank" class="gw-social-btn" title="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://www.facebook.com/GuicheWeb" target="_blank" class="gw-social-btn" title="Facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://www.youtube.com/channel/UC9-7SFPICgrmnZRXhmpFVug" target="_blank" class="gw-social-btn" title="YouTube">
+            <i class="fab fa-youtube"></i>
+          </a>
+          <a href="https://twitter.com/guicheweb" target="_blank" class="gw-social-btn" title="X (Twitter)">
+            <i class="fab fa-x-twitter"></i>
+          </a>
+        </div>
+
+        <div class="gw-footer-legal">
+          <p><strong>Guichê Web Comercialização de Ingressos Ltda</strong> - CNPJ 18.797.249/0001-35</p>
+          <p>Todos os preços e condições comerciais estão sujeitos a alteração sem aviso prévio.</p>
+          <p>© Todos os direitos reservados. Guichê Web 2026.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       FLOATING SAC / SUPPORT WIDGET
+       ======================================================================== -->
+  <div class="gw-floating-sac">
+    <button type="button" class="gw-sac-btn" id="gw-sac-btn" title="Atendimento Guichê Web">
+      <i class="fab fa-whatsapp"></i>
+    </button>
+
+    <div class="gw-sac-balloon" id="gw-sac-balloon">
+      <div class="gw-sac-header">
+        <h5><i class="fas fa-headset" style="color: #25d366;"></i> Suporte Guichê Web</h5>
+        <button type="button" class="gw-sac-close" id="gw-sac-close">&times;</button>
+      </div>
+      <div class="gw-sac-body">
+        <p style="margin-bottom: 10px;">Olá! Precisa de ajuda com a sua compra de ingressos para o Manifesto Musical?</p>
+        <p style="margin-bottom: 12px; font-size: 12px; color: #64748b;">
+          Atendimento automatizado e suporte especializado de segunda a sábado das 09h às 19h.
+        </p>
+        <a href="https://api.whatsapp.com/send?phone=551151941510&text=Olá,%20gostaria%20de%20informações%20sobre%20o%20Manifesto%20Musical%20Brasília" target="_blank" class="gw-btn-primary" style="background: #25d366; width: 100%; justify-content: center;">
+          <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: MAP LIGHTBOX
+       ======================================================================== -->
+  <div class="gw-modal-backdrop" id="gw-map-lightbox">
+    <div style="position: relative; text-align: center;">
+      <button type="button" class="gw-modal-close" style="position: absolute; top: -38px; right: 0; color: white; font-size: 32px;">&times;</button>
+      <img src="assets/mapa.jpg" alt="Mapa Ampliado" class="gw-lightbox-img">
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: CHECKOUT / REVISÃO DE PEDIDO
+       ======================================================================== -->
+  <div class="gw-modal-backdrop" id="gw-checkout-modal">
+    <div class="gw-modal-box">
+      <div class="gw-modal-header">
+        <h4><i class="fas fa-shopping-cart" style="color: #ff5722; margin-right: 8px;"></i> Resumo do Pedido</h4>
+        <button type="button" class="gw-modal-close">&times;</button>
+      </div>
+      <div class="gw-modal-body">
+        <div style="margin-bottom: 16px;">
+          <h5 style="font-size: 15px; font-weight: 700; color: #1e293b;">Manifesto Musical - Brasília</h5>
+          <p style="font-size: 13px; color: #64748b;">12/09/2026 • Arena Mané Garrincha</p>
+        </div>
+
+        <!-- Ingressos selecionados -->
+        <div id="gw-checkout-summary-list" style="margin-bottom: 16px;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 2px solid #e2e8f0; margin-bottom: 20px;">
+          <span style="font-size: 16px; font-weight: 700; color: #1e293b;">Total a pagar</span>
+          <span style="font-size: 24px; font-weight: 800; color: #ff5722;" id="gw-checkout-final-total">R$ 0,00</span>
+        </div>
+
+        <div style="background: #f8fafc; border-radius: 6px; padding: 14px; margin-bottom: 20px; font-size: 12.5px; color: #475569;">
+          <i class="fas fa-lock" style="color: #10b981; margin-right: 6px;"></i>
+          Ambiente 100% Seguro. Pagamento via PIX com aprovação imediata ou Cartão de Crédito em até 12x.
+        </div>
+
+        <button type="button" class="gw-btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;" onclick="alert('Demonstração do clone: Pedido pronto para processamento via checkout seguro!')">
+          Prosseguir para Identificação e Pagamento <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TOAST NOTIFICATION
+       ======================================================================== -->
+  <div class="gw-toast" id="gw-toast">
+    <i class="fas fa-check-circle"></i>
+    <span>Notificação</span>
+  </div>
+
+  <!-- Interactive Script -->
+  <script src="app.js"></script>
+</body>
+</html>
