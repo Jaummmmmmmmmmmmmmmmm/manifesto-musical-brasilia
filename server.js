@@ -681,15 +681,15 @@ const requestHandler = (req, res) => {
   // =========================================================================
   // STATIC FILE SERVING
   // =========================================================================
-  let rawUrl = parsedUrl;
+  let staticUrl = parsedUrl;
   const host = (req.headers['host'] || '').toLowerCase();
-  if (host.includes('manifesto-admin') && (rawUrl === '/' || rawUrl === '')) {
-    rawUrl = '/admin.html';
-  } else if (rawUrl === '/' || rawUrl === '') {
-    rawUrl = '/index.html';
+  if (host.includes('manifesto-admin') && (staticUrl === '/' || staticUrl === '')) {
+    staticUrl = '/admin.html';
+  } else if (staticUrl === '/' || staticUrl === '') {
+    staticUrl = '/index.html';
   }
-  if (rawUrl === '/admin' || rawUrl === '/admin/') rawUrl = '/admin.html';
-  const cleanPath = rawUrl.replace(/^\/+/, '');
+  if (staticUrl === '/admin' || staticUrl === '/admin/') staticUrl = '/admin.html';
+  const cleanPath = staticUrl.replace(/^\/+/, '');
 
   const possiblePaths = [
     path.join(__dirname, cleanPath),
