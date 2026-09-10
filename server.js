@@ -379,6 +379,7 @@ const requestHandler = (req, res) => {
   }
 
   const reqUrl = (req.url || '/').split('?')[0];
+  const isRoute = (pathStr) => reqUrl === pathStr || reqUrl.endsWith(pathStr);
 
   // =========================================================================
   // ADMIN ROUTES
