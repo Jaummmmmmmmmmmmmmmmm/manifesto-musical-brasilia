@@ -27,6 +27,13 @@ const mimeTypes = {
   '.ico': 'image/x-icon'
 };
 
+// Preload main static files for instant response & NFT bundling
+const staticCache = {};
+try { staticCache['/style.css'] = fs.readFileSync(path.join(__dirname, 'style.css')); } catch (e) {}
+try { staticCache['/index.html'] = fs.readFileSync(path.join(__dirname, 'index.html')); } catch (e) {}
+try { staticCache['/admin.html'] = fs.readFileSync(path.join(__dirname, 'admin.html')); } catch (e) {}
+try { staticCache['/js/app.js'] = fs.readFileSync(path.join(__dirname, 'js', 'app.js')); } catch (e) {}
+
 // Seed initial demo orders so dashboard is immediately functional
 let memoryOrders = [
   {
@@ -371,18 +378,14 @@ const requestHandler = (req, res) => {
     return res.end();
   }
 
-  const queryUrl = (req.url || '').includes('path=') ? decodeURIComponent(req.url.split('path=')[1].split('&')[0]) : '';
-  const matchedPath = req.headers['x-matched-path'] || req.headers['x-vercel-matched-path'] || '';
-  const rawUrl = req.url || '/';
-  const parsedUrl = (queryUrl || matchedPath || rawUrl).split('?')[0];
-  const isRoute = (pathStr) => parsedUrl === pathStr || rawUrl.includes(pathStr) || matchedPath.includes(pathStr) || queryUrl.includes(pathStr);
+  const reqUrl = (req.url || '/').split('?')[0];
 
   // =========================================================================
   // ADMIN ROUTES
   // =========================================================================
 
   // POST /api/admin/login
-  if (req.method === 'POST' && isRoute('/api/admin/login')) {
+  if (req.method === 'POST' && (reqUrl === '/api/admin/login' || reqUrl.endsWith('/api/admin/login'))) {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
@@ -681,16 +684,25 @@ const requestHandler = (req, res) => {
   // =========================================================================
   // STATIC FILE SERVING
   // =========================================================================
-  let staticUrl = parsedUrl;
+  let targetPath = reqUrl;
   const host = (req.headers['host'] || '').toLowerCase();
-  if (host.includes('manifesto-admin') && (staticUrl === '/' || staticUrl === '')) {
-    staticUrl = '/admin.html';
-  } else if (staticUrl === '/' || staticUrl === '') {
-    staticUrl = '/index.html';
+  if (host.includes('manifesto-admin') && (targetPath === '/' || targetPath === '')) {
+    targetPath = '/admin.html';
+  } else if (targetPath === '/' || targetPath === '') {
+    targetPath = '/index.html';
   }
-  if (staticUrl === '/admin' || staticUrl === '/admin/') staticUrl = '/admin.html';
-  const cleanPath = staticUrl.replace(/^\/+/, '');
+  if (targetPath === '/admin' || targetPath === '/admin/') targetPath = '/admin.html';
 
+  // 1. Serve directly from in-memory cache if available (instant response & correct mime)
+  if (staticCache[targetPath]) {
+    const ext = path.extname(targetPath).toLowerCase();
+    res.setHeader('Content-Type', mimeTypes[ext] || 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    return res.end(staticCache[targetPath]);
+  }
+
+  // 2. Try file from disk
+  const cleanPath = targetPath.replace(/^\/+/, '');
   const possiblePaths = [
     path.join(__dirname, cleanPath),
     path.join(process.cwd(), cleanPath),
@@ -707,36 +719,21 @@ const requestHandler = (req, res) => {
   if (foundPath) {
     const ext = path.extname(foundPath).toLowerCase();
     res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream');
-    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     return res.end(fs.readFileSync(foundPath));
   }
 
-  // If requesting admin specifically but file not found on disk, try admin.html in all paths
-  if (cleanPath === 'admin.html' || cleanPath === 'admin') {
-    const adminPaths = [
-      path.join(__dirname, 'admin.html'),
-      path.join(process.cwd(), 'admin.html')
-    ];
-    const foundAdmin = adminPaths.find(p => {
-      try { return fs.existsSync(p); } catch (e) { return false; }
-    });
-    if (foundAdmin) {
+  // 3. Fallback to index.html ONLY for page navigation routes (no dot extension, not api)
+  if (!targetPath.includes('.') && !targetPath.startsWith('/api')) {
+    if (staticCache['/index.html']) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.end(fs.readFileSync(foundAdmin));
+      return res.end(staticCache['/index.html']);
     }
-  }
-
-  // Fallback to index.html
-  const indexPaths = [
-    path.join(__dirname, 'index.html'),
-    path.join(process.cwd(), 'index.html')
-  ];
-  const foundIndex = indexPaths.find(p => {
-    try { return fs.existsSync(p); } catch (e) { return false; }
-  });
-  if (foundIndex) {
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.end(fs.readFileSync(foundIndex));
+    const indexPath = path.join(__dirname, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.end(fs.readFileSync(indexPath));
+    }
   }
 
   res.statusCode = 404;

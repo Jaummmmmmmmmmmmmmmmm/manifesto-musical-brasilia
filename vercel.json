@@ -1,12 +1,7 @@
 {
   "functions": {
-    "api/index.js": {
+    "server.js": {
       "includeFiles": "**"
     }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.js?path=/api/$1" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin/", "destination": "/admin.html" }
-  ]
+  }
 }
