@@ -912,33 +912,100 @@
        MODAL: CHECKOUT / REVISÃO DE PEDIDO
        ======================================================================== -->
   <div class="gw-modal-backdrop" id="gw-checkout-modal">
-    <div class="gw-modal-box">
+    <div class="gw-modal-box" style="max-width: 580px;">
       <div class="gw-modal-header">
-        <h4><i class="fas fa-shopping-cart" style="color: #ff5722; margin-right: 8px;"></i> Resumo do Pedido</h4>
+        <h4><i class="fas fa-shopping-cart" style="color: #ff5722; margin-right: 8px;"></i> Checkout de Ingressos</h4>
         <button type="button" class="gw-modal-close">&times;</button>
       </div>
       <div class="gw-modal-body">
-        <div style="margin-bottom: 16px;">
-          <h5 style="font-size: 15px; font-weight: 700; color: #1e293b;">Manifesto Musical - Brasília</h5>
-          <p style="font-size: 13px; color: #64748b;">12/09/2026 • Arena Mané Garrincha</p>
+        
+        <!-- STEP 1: FORMULÁRIO DE IDENTIFICAÇÃO E ENDEREÇO -->
+        <div id="gw-checkout-step-1">
+          <div style="margin-bottom: 14px; background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+            <h5 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">Manifesto Musical - Brasília</h5>
+            <p style="font-size: 12.5px; color: #64748b;">12/09/2026 • Arena Mané Garrincha</p>
+          </div>
+
+          <!-- Resumo dos ingressos -->
+          <div id="gw-checkout-summary-list" style="margin-bottom: 14px; max-height: 140px; overflow-y: auto;"></div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
+            <span style="font-size: 14px; font-weight: 700; color: #1e293b;">Total com Taxa (13%)</span>
+            <span style="font-size: 20px; font-weight: 800; color: #ff5722;" id="gw-checkout-final-total">R$ 0,00</span>
+          </div>
+
+          <h5 style="font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">
+            <i class="fas fa-user-edit" style="color: #ff5722; margin-right: 6px;"></i> Dados do Titular e Entrega
+          </h5>
+
+          <form id="gw-checkout-form">
+            <div class="gw-form-group">
+              <label for="gw-checkout-nome">Nome Completo *</label>
+              <input type="text" id="gw-checkout-nome" class="gw-form-input" placeholder="Ex: João Silva Sauro" required autocomplete="name">
+            </div>
+
+            <div class="gw-form-row">
+              <div class="gw-form-group">
+                <label for="gw-checkout-cpf">CPF *</label>
+                <input type="text" id="gw-checkout-cpf" class="gw-form-input" placeholder="000.000.000-00" maxlength="14" required autocomplete="off">
+              </div>
+              <div class="gw-form-group">
+                <label for="gw-checkout-email">E-mail *</label>
+                <input type="email" id="gw-checkout-email" class="gw-form-input" placeholder="seu@email.com" required autocomplete="email">
+              </div>
+            </div>
+
+            <div class="gw-form-group">
+              <label for="gw-checkout-endereco">Endereço Completo *</label>
+              <input type="text" id="gw-checkout-endereco" class="gw-form-input" placeholder="Rua, Número, Bairro, Cidade/UF" required autocomplete="street-address">
+            </div>
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #166534; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-bolt" style="color: #16a34a; font-size: 16px;"></i>
+              <span>Pagamento Instantâneo via <strong>PIX Oficial MisticPay</strong>. Aprovação automática em segundos.</span>
+            </div>
+
+            <button type="submit" class="gw-btn-primary" id="gw-btn-generate-pix" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">
+              <i class="fas fa-qrcode"></i> Gerar PIX e Concluir Pedido
+            </button>
+          </form>
         </div>
 
-        <!-- Ingressos selecionados -->
-        <div id="gw-checkout-summary-list" style="margin-bottom: 16px;"></div>
+        <!-- STEP 2: TELA DO PIX GERADO -->
+        <div id="gw-checkout-step-2" style="display: none;" class="gw-pix-screen">
+          <div class="gw-pix-timer">
+            <i class="far fa-clock"></i> Pague em até <span id="gw-pix-countdown">14:59</span>
+          </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 2px solid #e2e8f0; margin-bottom: 20px;">
-          <span style="font-size: 16px; font-weight: 700; color: #1e293b;">Total a pagar</span>
-          <span style="font-size: 24px; font-weight: 800; color: #ff5722;" id="gw-checkout-final-total">R$ 0,00</span>
+          <h4 style="font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Pague com PIX</h4>
+          <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Escaneie o QR Code abaixo ou copie a chave:</p>
+
+          <div class="gw-pix-qr">
+            <img id="gw-pix-qrcode-img" src="" alt="QR Code PIX MisticPay" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div style="margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #1e293b; text-align: left;">
+            PIX Copia e Cola:
+          </div>
+          <div class="gw-copy-box">
+            <input type="text" id="gw-pix-copypaste-input" class="gw-copy-input" readonly value="">
+            <button type="button" class="gw-copy-btn" id="gw-btn-copy-pix">
+              <i class="fas fa-copy"></i> Copiar Código
+            </button>
+          </div>
+
+          <div style="background: #f8fafc; border-radius: 6px; padding: 12px; font-size: 12px; color: #475569; text-align: left; margin-bottom: 16px; line-height: 1.5;">
+            <strong>Como pagar:</strong><br>
+            1. Abra o app do seu banco ou carteira digital favorita.<br>
+            2. Escolha a opção <strong>PIX</strong> e depois <strong>Pagar com QR Code</strong> ou <strong>PIX Copia e Cola</strong>.<br>
+            3. Cole o código ou aponte a câmera para o QR Code e confirme o pagamento.
+          </div>
+
+          <button type="button" class="gw-btn-outline" id="gw-btn-new-order" style="color: #333; border-color: #cbd5e1; width: 100%; justify-content: center; font-size: 13px;">
+            <i class="fas fa-arrow-left"></i> Voltar / Novo Pedido
+          </button>
         </div>
 
-        <div style="background: #f8fafc; border-radius: 6px; padding: 14px; margin-bottom: 20px; font-size: 12.5px; color: #475569;">
-          <i class="fas fa-lock" style="color: #10b981; margin-right: 6px;"></i>
-          Ambiente 100% Seguro. Pagamento via PIX com aprovação imediata ou Cartão de Crédito em até 12x.
-        </div>
-
-        <button type="button" class="gw-btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;" onclick="alert('Demonstração do clone: Pedido pronto para processamento via checkout seguro!')">
-          Prosseguir para Identificação e Pagamento <i class="fas fa-arrow-right"></i>
-        </button>
       </div>
     </div>
   </div>

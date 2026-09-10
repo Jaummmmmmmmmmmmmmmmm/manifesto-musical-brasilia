@@ -250,14 +250,69 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Checkout Modal
+  // Checkout Modal & PIX Flow
   const checkoutBtn = document.getElementById('gw-btn-checkout');
   const checkoutModal = document.getElementById('gw-checkout-modal');
   const checkoutSummaryList = document.getElementById('gw-checkout-summary-list');
   const checkoutFinalTotal = document.getElementById('gw-checkout-final-total');
+  const checkoutForm = document.getElementById('gw-checkout-form');
+  const generatePixBtn = document.getElementById('gw-btn-generate-pix');
+  const cpfInput = document.getElementById('gw-checkout-cpf');
+  const copyPixBtn = document.getElementById('gw-btn-copy-pix');
+  const copyPixInput = document.getElementById('gw-pix-copypaste-input');
+  const newOrderBtn = document.getElementById('gw-btn-new-order');
+  const step1 = document.getElementById('gw-checkout-step-1');
+  const step2 = document.getElementById('gw-checkout-step-2');
+  let pixTimer = null;
 
+  // CPF Input formatting mask
+  if (cpfInput) {
+    cpfInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.substring(0, 11);
+      if (v.length > 9) {
+        v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+      } else if (v.length > 6) {
+        v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+      } else if (v.length > 3) {
+        v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+      }
+      e.target.value = v;
+    });
+  }
+
+  // PIX Countdown timer (15 minutes)
+  function startPixCountdown(totalSeconds) {
+    if (pixTimer) clearInterval(pixTimer);
+    const countdownEl = document.getElementById('gw-pix-countdown');
+    if (!countdownEl) return;
+
+    let remain = totalSeconds;
+    const updateDisplay = () => {
+      const m = Math.floor(remain / 60).toString().padStart(2, '0');
+      const s = (remain % 60).toString().padStart(2, '0');
+      countdownEl.textContent = `${m}:${s}`;
+    };
+
+    updateDisplay();
+    pixTimer = setInterval(() => {
+      remain--;
+      if (remain <= 0) {
+        clearInterval(pixTimer);
+        countdownEl.textContent = 'Expirado';
+      } else {
+        updateDisplay();
+      }
+    }, 1000);
+  }
+
+  // Open Checkout Modal
   if (checkoutBtn && checkoutModal) {
     checkoutBtn.addEventListener('click', () => {
+      // Reset view to Step 1
+      if (step1) step1.style.display = 'block';
+      if (step2) step2.style.display = 'none';
+
       // Build summary
       let html = '';
       let subtotal = 0;
@@ -292,6 +347,118 @@ document.addEventListener('DOMContentLoaded', () => {
       checkoutSummaryList.innerHTML = html;
       checkoutFinalTotal.textContent = formatMoney(total);
       checkoutModal.classList.add('open');
+    });
+  }
+
+  // Handle Checkout Form Submission -> Call backend /api/checkout (MisticPay)
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let totalItems = 0;
+      let subtotal = 0;
+      const itemsList = [];
+      Object.entries(state.tickets).forEach(([id, t]) => {
+        if (t.qty > 0) {
+          totalItems += t.qty;
+          subtotal += t.qty * t.price;
+          itemsList.push(`${t.qty}x ${t.name}`);
+        }
+      });
+
+      if (totalItems === 0) {
+        showToast('Selecione ao menos 1 ingresso antes de prosseguir.', 'fa-exclamation-triangle');
+        return;
+      }
+
+      const nome = document.getElementById('gw-checkout-nome').value.trim();
+      const cpf = document.getElementById('gw-checkout-cpf').value.trim();
+      const email = document.getElementById('gw-checkout-email').value.trim();
+      const endereco = document.getElementById('gw-checkout-endereco').value.trim();
+
+      const cleanCpf = cpf.replace(/\D/g, '');
+      if (cleanCpf.length !== 11) {
+        showToast('Por favor, informe um CPF válido com 11 dígitos.', 'fa-exclamation-circle');
+        return;
+      }
+
+      const fee = subtotal * state.serviceFeeRate;
+      const finalTotal = Number((subtotal + fee).toFixed(2));
+
+      const originalBtnHtml = generatePixBtn.innerHTML;
+      generatePixBtn.disabled = true;
+      generatePixBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PIX MisticPay...';
+
+      try {
+        const response = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            cpf: cleanCpf,
+            email,
+            endereco,
+            amount: finalTotal,
+            itemsSummary: itemsList.join(', ')
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success && result.qrCodeBase64) {
+          const qrImg = document.getElementById('gw-pix-qrcode-img');
+          if (qrImg) qrImg.src = result.qrCodeBase64;
+          if (copyPixInput) copyPixInput.value = result.copyPaste || '';
+
+          if (step1) step1.style.display = 'none';
+          if (step2) step2.style.display = 'block';
+
+          startPixCountdown(15 * 60);
+          showToast('Cobrança PIX gerada com sucesso!', 'fa-qrcode');
+        } else {
+          showToast(result.error || 'Não foi possível gerar a cobrança PIX. Tente novamente.', 'fa-exclamation-triangle');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Erro de conexão ao comunicar com o servidor.', 'fa-times-circle');
+      } finally {
+        generatePixBtn.disabled = false;
+        generatePixBtn.innerHTML = originalBtnHtml;
+      }
+    });
+  }
+
+  // Copy PIX button
+  if (copyPixBtn && copyPixInput) {
+    copyPixBtn.addEventListener('click', () => {
+      const text = copyPixInput.value;
+      if (!text) return;
+
+      const fallbackCopy = () => {
+        copyPixInput.select();
+        copyPixInput.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        showToast('Código PIX copiado com sucesso!', 'fa-clipboard-check');
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Código PIX copiado com sucesso!', 'fa-clipboard-check');
+        }).catch(() => {
+          fallbackCopy();
+        });
+      } else {
+        fallbackCopy();
+      }
+    });
+  }
+
+  // Return / New Order button
+  if (newOrderBtn) {
+    newOrderBtn.addEventListener('click', () => {
+      if (pixTimer) clearInterval(pixTimer);
+      if (step1) step1.style.display = 'block';
+      if (step2) step2.style.display = 'none';
     });
   }
 

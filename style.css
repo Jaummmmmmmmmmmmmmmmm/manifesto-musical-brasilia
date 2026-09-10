@@ -1456,25 +1456,115 @@ img {
   border-radius: 8px;
 }
 
-/* Toast */
-.gw-toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #1e293b;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 30px;
+/* Checkout Form */
+.gw-form-group {
+  margin-bottom: 14px;
+}
+
+.gw-form-group label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 5px;
+}
+
+.gw-form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 500;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-  z-index: 3000;
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.gw-form-input:focus {
+  border-color: #ff5722;
+  box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
+}
+
+.gw-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* PIX Screen */
+.gw-pix-screen {
+  text-align: center;
+  padding: 6px 0;
+}
+
+.gw-pix-qr {
+  max-width: 220px;
+  width: 100%;
+  margin: 0 auto 14px auto;
+  padding: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.gw-copy-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.gw-copy-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #f8fafc;
+  color: #475569;
+  outline: none;
+}
+
+.gw-copy-btn {
+  background: #00d05a;
+  color: white;
+  border: none;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.gw-copy-btn:hover {
+  background: #00b34d;
+}
+
+.gw-pix-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+  .gw-form-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .gw-toast.show {
