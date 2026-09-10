@@ -687,21 +687,52 @@ const requestHandler = (req, res) => {
   if (rawUrl === '/admin' || rawUrl === '/admin/') rawUrl = '/admin.html';
   const cleanPath = rawUrl.replace(/^\/+/, '');
 
-  const basePath = __dirname;
-  const filePath = path.join(basePath, cleanPath);
+  const possiblePaths = [
+    path.join(__dirname, cleanPath),
+    path.join(process.cwd(), cleanPath),
+    path.join(__dirname, '..', cleanPath)
+  ];
+  const foundPath = possiblePaths.find(p => {
+    try {
+      return fs.existsSync(p) && fs.statSync(p).isFile();
+    } catch (e) {
+      return false;
+    }
+  });
 
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    const ext = path.extname(filePath).toLowerCase();
+  if (foundPath) {
+    const ext = path.extname(foundPath).toLowerCase();
     res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream');
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-    return res.end(fs.readFileSync(filePath));
+    return res.end(fs.readFileSync(foundPath));
+  }
+
+  // If requesting admin specifically but file not found on disk, try admin.html in all paths
+  if (cleanPath === 'admin.html' || cleanPath === 'admin') {
+    const adminPaths = [
+      path.join(__dirname, 'admin.html'),
+      path.join(process.cwd(), 'admin.html')
+    ];
+    const foundAdmin = adminPaths.find(p => {
+      try { return fs.existsSync(p); } catch (e) { return false; }
+    });
+    if (foundAdmin) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.end(fs.readFileSync(foundAdmin));
+    }
   }
 
   // Fallback to index.html
-  const indexPath = path.join(basePath, 'index.html');
-  if (fs.existsSync(indexPath)) {
+  const indexPaths = [
+    path.join(__dirname, 'index.html'),
+    path.join(process.cwd(), 'index.html')
+  ];
+  const foundIndex = indexPaths.find(p => {
+    try { return fs.existsSync(p); } catch (e) { return false; }
+  });
+  if (foundIndex) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.end(fs.readFileSync(indexPath));
+    return res.end(fs.readFileSync(foundIndex));
   }
 
   res.statusCode = 404;
