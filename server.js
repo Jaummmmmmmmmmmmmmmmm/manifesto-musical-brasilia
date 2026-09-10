@@ -1,13 +1,10 @@
-const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
-
-const MIME_TYPES = {
+const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
+  '.js': 'application/javascript; charset=utf-8',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -16,25 +13,28 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon'
 };
 
-const server = http.createServer((req, res) => {
-  let reqPath = req.url.split('?')[0];
-  if (reqPath === '/') reqPath = '/index.html';
+module.exports = (req, res) => {
+  let rawUrl = (req.url || '/').split('?')[0];
+  if (rawUrl === '/' || rawUrl === '') rawUrl = '/index.html';
+  const cleanPath = rawUrl.replace(/^\/+/, '');
 
-  const filePath = path.join(__dirname, reqPath);
+  const basePath = __dirname;
+  const filePath = path.join(basePath, cleanPath);
 
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('404 Not Found');
-      return;
-    }
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
     const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(data);
-  });
-});
+    res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream');
+    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    return res.end(fs.readFileSync(filePath));
+  }
 
-server.listen(PORT, () => {
-  console.log(`Servidor Guichê Web Clone rodando em: http://localhost:${PORT}`);
-});
+  // Fallback to index.html
+  const indexPath = path.join(basePath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.end(fs.readFileSync(indexPath));
+  }
+
+  res.statusCode = 404;
+  res.end('Not found');
+};
