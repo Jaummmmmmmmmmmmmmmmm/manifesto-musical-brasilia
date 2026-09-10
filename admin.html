@@ -907,12 +907,15 @@
   </div>
 
   <script>
-    // Configuration & State
-    const API_BASE = window.location.origin;
+    // Configuration & State - Always connects to the central main backend
+    const API_BASE = window.location.hostname.includes('localhost')
+      ? window.location.origin
+      : 'https://manifesto-musical-brasilia.vercel.app';
     let authToken = localStorage.getItem('mm_admin_token') || '';
     let rawOrders = [];
     let currentFilter = 'all';
     let searchQuery = '';
+    let autoRefreshTimer = null;
 
     // DOM Elements
     const viewLogin = document.getElementById('view-login');
@@ -1045,8 +1048,8 @@
     });
 
     // Fetch Orders from Server
-    async function loadOrders() {
-      refreshIcon.classList.add('fa-spin');
+    async function loadOrders(silent = false) {
+      if (!silent) refreshIcon.classList.add('fa-spin');
       try {
         const res = await fetch(`${API_BASE}/api/admin/orders`, {
           headers: {
@@ -1062,19 +1065,33 @@
 
         const data = await res.json();
         if (data.success && Array.isArray(data.orders)) {
+          if (rawOrders.length > 0 && data.orders.length > rawOrders.length) {
+            const diff = data.orders.length - rawOrders.length;
+            showToast(`${diff} novo(s) pedido(s) recebido(s)!`, 'fa-bell', '#22c55e');
+          }
           rawOrders = data.orders;
           updateMetrics();
           renderOrders();
         }
       } catch (err) {
-        console.error(err);
-        showToast('Falha ao sincronizar pedidos.', 'fa-times-circle', 'var(--danger)');
+        if (!silent) {
+          console.error(err);
+          showToast('Falha ao sincronizar pedidos.', 'fa-times-circle', 'var(--danger)');
+        }
       } finally {
-        setTimeout(() => refreshIcon.classList.remove('fa-spin'), 400);
+        if (!silent) setTimeout(() => refreshIcon.classList.remove('fa-spin'), 400);
       }
     }
 
-    btnRefresh.addEventListener('click', loadOrders);
+    btnRefresh.addEventListener('click', () => loadOrders(false));
+
+    // Auto-refresh every 8 seconds in background
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(() => {
+      if (authToken && viewDashboard.style.display !== 'none') {
+        loadOrders(true);
+      }
+    }, 8000);
 
     // Update Metrics Cards
     function updateMetrics() {
