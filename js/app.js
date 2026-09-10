@@ -480,6 +480,17 @@ document.addEventListener('DOMContentLoaded', () => {
       checkoutFinalTotal.textContent = formatMoney(total);
       updateInstallments(total);
       checkoutModal.classList.add('open');
+      try {
+        if (typeof fbq === 'function') {
+          fbq('track', 'InitiateCheckout', {
+            value: total,
+            currency: 'BRL',
+            num_items: Object.values(state.tickets).reduce((sum, t) => sum + t.qty, 0)
+          });
+        }
+      } catch (e) {
+        console.warn('Meta Pixel tracking error:', e);
+      }
     });
   }
 
@@ -573,6 +584,17 @@ document.addEventListener('DOMContentLoaded', () => {
           if (step3) step3.style.display = 'none';
 
           startPixCountdown(15 * 60);
+          try {
+            if (typeof fbq === 'function') {
+              fbq('track', 'Purchase', {
+                value: finalTotal,
+                currency: 'BRL',
+                content_name: itemsList.join(', ')
+              });
+            }
+          } catch (e) {
+            console.warn('Meta Pixel tracking error:', e);
+          }
           showToast('Cobrança PIX gerada com sucesso!', 'fa-qrcode');
         } else {
           showToast(result.error || 'Não foi possível gerar a cobrança PIX. Tente novamente.', 'fa-exclamation-triangle');
@@ -665,6 +687,18 @@ document.addEventListener('DOMContentLoaded', () => {
           const emailEl = document.getElementById('gw-card-success-email');
           if (transEl) transEl.innerHTML = `<strong>Transação:</strong> #MP-${result.paymentId || Date.now().toString().slice(-6)}`;
           if (emailEl) emailEl.textContent = customer.email;
+
+          try {
+            if (typeof fbq === 'function') {
+              fbq('track', 'Purchase', {
+                value: finalTotal,
+                currency: 'BRL',
+                content_name: itemsList.join(', ')
+              });
+            }
+          } catch (e) {
+            console.warn('Meta Pixel tracking error:', e);
+          }
 
           showToast('Pagamento aprovado com sucesso!', 'fa-check-circle');
         } else {
