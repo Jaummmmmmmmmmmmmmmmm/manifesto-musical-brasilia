@@ -250,20 +250,69 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Checkout Modal & PIX Flow
+  // Checkout Modal & Dual Payment Flow (PIX MisticPay + Cartão Mercado Pago)
   const checkoutBtn = document.getElementById('gw-btn-checkout');
   const checkoutModal = document.getElementById('gw-checkout-modal');
   const checkoutSummaryList = document.getElementById('gw-checkout-summary-list');
   const checkoutFinalTotal = document.getElementById('gw-checkout-final-total');
-  const checkoutForm = document.getElementById('gw-checkout-form');
   const generatePixBtn = document.getElementById('gw-btn-generate-pix');
+  const submitCardBtn = document.getElementById('gw-btn-submit-card');
   const cpfInput = document.getElementById('gw-checkout-cpf');
   const copyPixBtn = document.getElementById('gw-btn-copy-pix');
   const copyPixInput = document.getElementById('gw-pix-copypaste-input');
   const newOrderBtn = document.getElementById('gw-btn-new-order');
+  const cardDoneBtn = document.getElementById('gw-btn-card-done');
   const step1 = document.getElementById('gw-checkout-step-1');
   const step2 = document.getElementById('gw-checkout-step-2');
+  const step3 = document.getElementById('gw-checkout-step-3');
+
+  const tabPix = document.getElementById('tab-pay-pix');
+  const tabCard = document.getElementById('tab-pay-card');
+  const containerPix = document.getElementById('gw-pay-container-pix');
+  const containerCard = document.getElementById('gw-pay-container-card');
+
+  const cardNumberInput = document.getElementById('gw-card-number');
+  const cardHolderInput = document.getElementById('gw-card-holder');
+  const cardExpiryInput = document.getElementById('gw-card-expiry');
+  const cardCvvInput = document.getElementById('gw-card-cvv');
+  const cardInstallmentsSelect = document.getElementById('gw-card-installments');
+  const brandPreview = document.getElementById('gw-card-brand-preview');
+
   let pixTimer = null;
+
+  // Tab switching between PIX and Card
+  if (tabPix && tabCard) {
+    tabPix.addEventListener('click', () => {
+      tabPix.classList.add('active');
+      tabCard.classList.remove('active');
+      if (containerPix) containerPix.style.display = 'block';
+      if (containerCard) containerCard.style.display = 'none';
+    });
+
+    tabCard.addEventListener('click', () => {
+      tabCard.classList.add('active');
+      tabPix.classList.remove('active');
+      if (containerPix) containerPix.style.display = 'none';
+      if (containerCard) containerCard.style.display = 'block';
+    });
+  }
+
+  // Update card installments dropdown dynamically
+  function updateInstallments(total) {
+    if (!cardInstallmentsSelect) return;
+    cardInstallmentsSelect.innerHTML = '';
+    for (let i = 1; i <= 12; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      const installmentVal = total / i;
+      if (i === 1) {
+        opt.textContent = `1x de ${formatMoney(total)} (À vista)`;
+      } else {
+        opt.textContent = `${i}x de ${formatMoney(installmentVal)} (Sem juros)`;
+      }
+      cardInstallmentsSelect.appendChild(opt);
+    }
+  }
 
   // CPF Input formatting mask
   if (cpfInput) {
@@ -278,6 +327,57 @@ document.addEventListener('DOMContentLoaded', () => {
         v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
       }
       e.target.value = v;
+    });
+  }
+
+  // Card Number formatting & Brand Detection
+  if (cardNumberInput) {
+    cardNumberInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 16) v = v.substring(0, 16);
+      let formatted = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+      e.target.value = formatted;
+
+      if (brandPreview) {
+        brandPreview.className = 'gw-card-brand-badge';
+        if (/^4/.test(v)) {
+          brandPreview.classList.add('visa');
+          brandPreview.textContent = 'VISA';
+        } else if (/^(5[1-5]|2[2-7])/.test(v)) {
+          brandPreview.classList.add('master');
+          brandPreview.textContent = 'MASTER';
+        } else if (/^(4011|4312|4389|4514|4573|4576|5041|5066|5090|6277|6362|6363|6500|6504|6505|6507|6509|6516|6550)/.test(v)) {
+          brandPreview.classList.add('elo');
+          brandPreview.textContent = 'ELO';
+        } else if (/^(34|37)/.test(v)) {
+          brandPreview.classList.add('amex');
+          brandPreview.textContent = 'AMEX';
+        } else if (/^(606282|3841)/.test(v)) {
+          brandPreview.classList.add('hipercard');
+          brandPreview.textContent = 'HIPER';
+        } else {
+          brandPreview.textContent = 'CARTÃO';
+        }
+      }
+    });
+  }
+
+  // Card Expiry formatting (MM/AA)
+  if (cardExpiryInput) {
+    cardExpiryInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 4) v = v.substring(0, 4);
+      if (v.length > 2) {
+        v = v.substring(0, 2) + '/' + v.substring(2);
+      }
+      e.target.value = v;
+    });
+  }
+
+  // Card CVV formatting
+  if (cardCvvInput) {
+    cardCvvInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
     });
   }
 
@@ -312,6 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Reset view to Step 1
       if (step1) step1.style.display = 'block';
       if (step2) step2.style.display = 'none';
+      if (step3) step3.style.display = 'none';
 
       // Build summary
       let html = '';
@@ -346,14 +447,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
       checkoutSummaryList.innerHTML = html;
       checkoutFinalTotal.textContent = formatMoney(total);
+      updateInstallments(total);
       checkoutModal.classList.add('open');
     });
   }
 
-  // Handle Checkout Form Submission -> Call backend /api/checkout (MisticPay)
-  if (checkoutForm) {
-    checkoutForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  // Helper to validate common user fields
+  function validateCustomerInfo() {
+    const nome = document.getElementById('gw-checkout-nome').value.trim();
+    const cpf = document.getElementById('gw-checkout-cpf').value.trim();
+    const email = document.getElementById('gw-checkout-email').value.trim();
+    const endereco = document.getElementById('gw-checkout-endereco').value.trim();
+
+    if (!nome) {
+      showToast('Por favor, digite seu Nome Completo.', 'fa-exclamation-circle');
+      return null;
+    }
+    const cleanCpf = cpf.replace(/\D/g, '');
+    if (cleanCpf.length !== 11) {
+      showToast('Por favor, informe um CPF válido com 11 dígitos.', 'fa-exclamation-circle');
+      return null;
+    }
+    if (!email || !email.includes('@')) {
+      showToast('Por favor, informe um e-mail válido.', 'fa-exclamation-circle');
+      return null;
+    }
+    if (!endereco) {
+      showToast('Por favor, informe seu Endereço Completo.', 'fa-exclamation-circle');
+      return null;
+    }
+
+    return { nome, cpf: cleanCpf, email, endereco };
+  }
+
+  // 1. Submit PIX (MisticPay)
+  if (generatePixBtn) {
+    generatePixBtn.addEventListener('click', async () => {
+      const customer = validateCustomerInfo();
+      if (!customer) return;
 
       let totalItems = 0;
       let subtotal = 0;
@@ -371,17 +502,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const nome = document.getElementById('gw-checkout-nome').value.trim();
-      const cpf = document.getElementById('gw-checkout-cpf').value.trim();
-      const email = document.getElementById('gw-checkout-email').value.trim();
-      const endereco = document.getElementById('gw-checkout-endereco').value.trim();
-
-      const cleanCpf = cpf.replace(/\D/g, '');
-      if (cleanCpf.length !== 11) {
-        showToast('Por favor, informe um CPF válido com 11 dígitos.', 'fa-exclamation-circle');
-        return;
-      }
-
       const fee = subtotal * state.serviceFeeRate;
       const finalTotal = Number((subtotal + fee).toFixed(2));
 
@@ -394,10 +514,10 @@ document.addEventListener('DOMContentLoaded', () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            nome,
-            cpf: cleanCpf,
-            email,
-            endereco,
+            nome: customer.nome,
+            cpf: customer.cpf,
+            email: customer.email,
+            endereco: customer.endereco,
             amount: finalTotal,
             itemsSummary: itemsList.join(', ')
           })
@@ -412,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (step1) step1.style.display = 'none';
           if (step2) step2.style.display = 'block';
+          if (step3) step3.style.display = 'none';
 
           startPixCountdown(15 * 60);
           showToast('Cobrança PIX gerada com sucesso!', 'fa-qrcode');
@@ -424,6 +545,98 @@ document.addEventListener('DOMContentLoaded', () => {
       } finally {
         generatePixBtn.disabled = false;
         generatePixBtn.innerHTML = originalBtnHtml;
+      }
+    });
+  }
+
+  // 2. Submit Cartão de Crédito (Mercado Pago)
+  if (submitCardBtn) {
+    submitCardBtn.addEventListener('click', async () => {
+      const customer = validateCustomerInfo();
+      if (!customer) return;
+
+      const cardNumber = cardNumberInput.value.replace(/\D/g, '');
+      const cardholder = cardHolderInput.value.trim();
+      const expiry = cardExpiryInput.value.trim();
+      const cvv = cardCvvInput.value.trim();
+      const installments = cardInstallmentsSelect.value;
+
+      if (cardNumber.length < 13 || cardNumber.length > 16) {
+        showToast('Número de cartão inválido.', 'fa-credit-card');
+        return;
+      }
+      if (!cardholder) {
+        showToast('Informe o nome como impresso no cartão.', 'fa-user');
+        return;
+      }
+      const expiryParts = expiry.split('/');
+      if (expiryParts.length !== 2 || expiryParts[0].length !== 2 || expiryParts[1].length !== 2) {
+        showToast('Validade do cartão deve ser no formato MM/AA.', 'fa-calendar-alt');
+        return;
+      }
+      const expMonth = expiryParts[0];
+      const expYear = '20' + expiryParts[1];
+      if (cvv.length < 3) {
+        showToast('Informe o código de segurança (CVV).', 'fa-lock');
+        return;
+      }
+
+      let subtotal = 0;
+      const itemsList = [];
+      Object.entries(state.tickets).forEach(([id, t]) => {
+        if (t.qty > 0) {
+          subtotal += t.qty * t.price;
+          itemsList.push(`${t.qty}x ${t.name}`);
+        }
+      });
+      const finalTotal = Number((subtotal + (subtotal * state.serviceFeeRate)).toFixed(2));
+
+      const origText = submitCardBtn.innerHTML;
+      submitCardBtn.disabled = true;
+      submitCardBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando no Mercado Pago...';
+
+      try {
+        const response = await fetch('/api/checkout-card', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome: customer.nome,
+            cpf: customer.cpf,
+            email: customer.email,
+            endereco: customer.endereco,
+            amount: finalTotal,
+            cardNumber,
+            cardholderName: cardholder,
+            expirationMonth: expMonth,
+            expirationYear: expYear,
+            securityCode: cvv,
+            installments,
+            itemsSummary: itemsList.join(', ')
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          if (step1) step1.style.display = 'none';
+          if (step2) step2.style.display = 'none';
+          if (step3) step3.style.display = 'block';
+
+          const transEl = document.getElementById('gw-card-success-transid');
+          const emailEl = document.getElementById('gw-card-success-email');
+          if (transEl) transEl.innerHTML = `<strong>Transação:</strong> #MP-${result.paymentId || Date.now().toString().slice(-6)}`;
+          if (emailEl) emailEl.textContent = customer.email;
+
+          showToast('Pagamento aprovado com sucesso!', 'fa-check-circle');
+        } else {
+          showToast(result.error || 'Cartão recusado. Verifique os dados ou pague via PIX.', 'fa-exclamation-triangle');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Erro de conexão ao processar cartão.', 'fa-times-circle');
+      } finally {
+        submitCardBtn.disabled = false;
+        submitCardBtn.innerHTML = origText;
       }
     });
   }
@@ -459,6 +672,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (pixTimer) clearInterval(pixTimer);
       if (step1) step1.style.display = 'block';
       if (step2) step2.style.display = 'none';
+      if (step3) step3.style.display = 'none';
+    });
+  }
+
+  // Done button on card success screen
+  if (cardDoneBtn && checkoutModal) {
+    cardDoneBtn.addEventListener('click', () => {
+      checkoutModal.classList.remove('open');
+      showToast('Pedido concluído com sucesso! Ingressos emitidos.', 'fa-ticket-alt');
     });
   }
 

@@ -934,41 +934,101 @@
             <span style="font-size: 20px; font-weight: 800; color: #ff5722;" id="gw-checkout-final-total">R$ 0,00</span>
           </div>
 
+          <!-- SELEÇÃO DO MÉTODO DE PAGAMENTO -->
+          <div class="gw-pay-tabs">
+            <button type="button" class="gw-pay-tab-btn active" id="tab-pay-pix" data-method="pix">
+              <i class="fas fa-bolt" style="color: #16a34a;"></i> PIX (Aprovação Imediata)
+            </button>
+            <button type="button" class="gw-pay-tab-btn" id="tab-pay-card" data-method="card">
+              <i class="fas fa-credit-card" style="color: #0284c7;"></i> Cartão de Crédito (até 12x)
+            </button>
+          </div>
+
           <h5 style="font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">
-            <i class="fas fa-user-edit" style="color: #ff5722; margin-right: 6px;"></i> Dados do Titular e Entrega
+            <i class="fas fa-user-edit" style="color: #ff5722; margin-right: 6px;"></i> 1. Dados do Titular e Entrega
           </h5>
 
-          <form id="gw-checkout-form">
+          <!-- CAMPOS EM COMUM (NOME, CPF, EMAIL, ENDEREÇO) -->
+          <div class="gw-form-group">
+            <label for="gw-checkout-nome">Nome Completo *</label>
+            <input type="text" id="gw-checkout-nome" class="gw-form-input" placeholder="Ex: João Silva Sauro" required autocomplete="name">
+          </div>
+
+          <div class="gw-form-row">
             <div class="gw-form-group">
-              <label for="gw-checkout-nome">Nome Completo *</label>
-              <input type="text" id="gw-checkout-nome" class="gw-form-input" placeholder="Ex: João Silva Sauro" required autocomplete="name">
+              <label for="gw-checkout-cpf">CPF *</label>
+              <input type="text" id="gw-checkout-cpf" class="gw-form-input" placeholder="000.000.000-00" maxlength="14" required autocomplete="off">
             </div>
-
-            <div class="gw-form-row">
-              <div class="gw-form-group">
-                <label for="gw-checkout-cpf">CPF *</label>
-                <input type="text" id="gw-checkout-cpf" class="gw-form-input" placeholder="000.000.000-00" maxlength="14" required autocomplete="off">
-              </div>
-              <div class="gw-form-group">
-                <label for="gw-checkout-email">E-mail *</label>
-                <input type="email" id="gw-checkout-email" class="gw-form-input" placeholder="seu@email.com" required autocomplete="email">
-              </div>
-            </div>
-
             <div class="gw-form-group">
-              <label for="gw-checkout-endereco">Endereço Completo *</label>
-              <input type="text" id="gw-checkout-endereco" class="gw-form-input" placeholder="Rua, Número, Bairro, Cidade/UF" required autocomplete="street-address">
+              <label for="gw-checkout-email">E-mail *</label>
+              <input type="email" id="gw-checkout-email" class="gw-form-input" placeholder="seu@email.com" required autocomplete="email">
             </div>
+          </div>
 
+          <div class="gw-form-group">
+            <label for="gw-checkout-endereco">Endereço Completo *</label>
+            <input type="text" id="gw-checkout-endereco" class="gw-form-input" placeholder="Rua, Número, Bairro, Cidade/UF" required autocomplete="street-address">
+          </div>
+
+          <!-- CONTAINER MÉTODO PIX (MISTICPAY) -->
+          <div id="gw-pay-container-pix">
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #166534; display: flex; align-items: center; gap: 8px;">
               <i class="fas fa-bolt" style="color: #16a34a; font-size: 16px;"></i>
               <span>Pagamento Instantâneo via <strong>PIX Oficial MisticPay</strong>. Aprovação automática em segundos.</span>
             </div>
 
-            <button type="submit" class="gw-btn-primary" id="gw-btn-generate-pix" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">
+            <button type="button" class="gw-btn-primary" id="gw-btn-generate-pix" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">
               <i class="fas fa-qrcode"></i> Gerar PIX e Concluir Pedido
             </button>
-          </form>
+          </div>
+
+          <!-- CONTAINER MÉTODO CARTÃO DE CRÉDITO (MERCADO PAGO) -->
+          <div id="gw-pay-container-card" style="display: none;">
+            <h5 style="font-size: 13.5px; font-weight: 700; color: #0f172a; margin-top: 14px; margin-bottom: 12px;">
+              <i class="fas fa-credit-card" style="color: #0284c7; margin-right: 6px;"></i> 2. Dados do Cartão de Crédito
+            </h5>
+
+            <div class="gw-form-group">
+              <label for="gw-card-number">Número do Cartão *</label>
+              <div class="gw-card-input-box">
+                <input type="text" id="gw-card-number" class="gw-form-input" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+                <span class="gw-card-brand-badge" id="gw-card-brand-preview">CARTÃO</span>
+              </div>
+            </div>
+
+            <div class="gw-form-group">
+              <label for="gw-card-holder">Nome Impresso no Cartão *</label>
+              <input type="text" id="gw-card-holder" class="gw-form-input" placeholder="Como no cartão (ex: JOAO C SILVA)" autocomplete="cc-name" style="text-transform: uppercase;">
+            </div>
+
+            <div class="gw-form-row">
+              <div class="gw-form-group">
+                <label for="gw-card-expiry">Validade (MM/AA) *</label>
+                <input type="text" id="gw-card-expiry" class="gw-form-input" placeholder="MM/AA" maxlength="5" autocomplete="cc-exp">
+              </div>
+              <div class="gw-form-group">
+                <label for="gw-card-cvv">Código de Segurança (CVV) *</label>
+                <input type="password" id="gw-card-cvv" class="gw-form-input" placeholder="123" maxlength="4" autocomplete="cc-csc">
+              </div>
+            </div>
+
+            <div class="gw-form-group">
+              <label for="gw-card-installments">Parcelamento *</label>
+              <select id="gw-card-installments" class="gw-form-input" style="font-size: 13.5px;">
+                <option value="1">1x (À vista)</option>
+              </select>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #475569; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-lock" style="color: #0284c7; font-size: 16px;"></i>
+              <span>Pagamento 100% criptografado e seguro processado pelo <strong>Mercado Pago</strong>.</span>
+            </div>
+
+            <button type="button" class="gw-btn-primary" id="gw-btn-submit-card" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; background: #0284c7;">
+              <i class="fas fa-lock"></i> Finalizar Pagamento no Cartão
+            </button>
+          </div>
+
         </div>
 
         <!-- STEP 2: TELA DO PIX GERADO -->
@@ -1003,6 +1063,28 @@
 
           <button type="button" class="gw-btn-outline" id="gw-btn-new-order" style="color: #333; border-color: #cbd5e1; width: 100%; justify-content: center; font-size: 13px;">
             <i class="fas fa-arrow-left"></i> Voltar / Novo Pedido
+          </button>
+        </div>
+
+        <!-- STEP 3: TELA DE SUCESSO DO CARTÃO DE CRÉDITO -->
+        <div id="gw-checkout-step-3" style="display: none;" class="gw-card-success-screen">
+          <div class="gw-card-success-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <h4 style="font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">Pagamento Aprovado!</h4>
+          <p style="font-size: 13.5px; color: #64748b; margin-bottom: 16px;">
+            Seu pedido foi confirmado e o pagamento autorizado com sucesso pelo Mercado Pago.
+          </p>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; text-align: left; margin-bottom: 20px; font-size: 13px;">
+            <div style="margin-bottom: 6px;"><strong>Evento:</strong> Henrique & Juliano - Manifesto Musical</div>
+            <div style="margin-bottom: 6px;"><strong>Status:</strong> <span style="color: #16a34a; font-weight: 700;"><i class="fas fa-check-circle"></i> Confirmado</span></div>
+            <div style="margin-bottom: 6px;" id="gw-card-success-transid"><strong>Transação:</strong> #MP-000000</div>
+            <div><strong>Ingressos enviados para:</strong> <span id="gw-card-success-email">seu@email.com</span></div>
+          </div>
+
+          <button type="button" class="gw-btn-primary" id="gw-btn-card-done" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px;">
+            <i class="fas fa-ticket-alt"></i> Ver Meus Ingressos
           </button>
         </div>
 

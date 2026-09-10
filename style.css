@@ -1493,6 +1493,116 @@ img {
   gap: 12px;
 }
 
+/* Payment Method Tabs */
+.gw-pay-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.gw-pay-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.gw-pay-tab-btn:hover {
+  color: #1e293b;
+}
+
+.gw-pay-tab-btn.active {
+  background: white;
+  color: #ff5722;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.gw-pay-tab-btn i {
+  font-size: 15px;
+}
+
+/* Card Inputs & Brand Badge */
+.gw-card-input-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gw-card-input-box .gw-form-input {
+  padding-right: 50px;
+}
+
+.gw-card-brand-badge {
+  position: absolute;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  background: #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.gw-card-brand-badge.visa {
+  background: #1a1f71;
+  color: white;
+}
+
+.gw-card-brand-badge.master {
+  background: #eb001b;
+  color: white;
+}
+
+.gw-card-brand-badge.elo {
+  background: #00a4e8;
+  color: white;
+}
+
+.gw-card-brand-badge.amex {
+  background: #006fcf;
+  color: white;
+}
+
+.gw-card-brand-badge.hipercard {
+  background: #b31217;
+  color: white;
+}
+
+/* Card Success Screen */
+.gw-card-success-screen {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.gw-card-success-icon {
+  width: 70px;
+  height: 70px;
+  background: #dcfce7;
+  color: #16a34a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 16px auto;
+}
+
 /* PIX Screen */
 .gw-pix-screen {
   text-align: center;
