@@ -371,14 +371,18 @@ const requestHandler = (req, res) => {
     return res.end();
   }
 
-  const parsedUrl = (req.url || '/').split('?')[0];
+  const queryUrl = (req.url || '').includes('path=') ? decodeURIComponent(req.url.split('path=')[1].split('&')[0]) : '';
+  const matchedPath = req.headers['x-matched-path'] || req.headers['x-vercel-matched-path'] || '';
+  const rawUrl = req.url || '/';
+  const parsedUrl = (queryUrl || matchedPath || rawUrl).split('?')[0];
+  const isRoute = (pathStr) => parsedUrl === pathStr || rawUrl.includes(pathStr) || matchedPath.includes(pathStr) || queryUrl.includes(pathStr);
 
   // =========================================================================
   // ADMIN ROUTES
   // =========================================================================
 
   // POST /api/admin/login
-  if (req.method === 'POST' && parsedUrl === '/api/admin/login') {
+  if (req.method === 'POST' && isRoute('/api/admin/login')) {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
@@ -408,7 +412,7 @@ const requestHandler = (req, res) => {
   }
 
   // GET /api/admin/orders
-  if (req.method === 'GET' && parsedUrl === '/api/admin/orders') {
+  if (req.method === 'GET' && isRoute('/api/admin/orders')) {
     const authHeader = req.headers['authorization'] || req.headers['x-admin-token'];
     if (!isValidAdminToken(authHeader)) {
       res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -426,7 +430,7 @@ const requestHandler = (req, res) => {
   }
 
   // PATCH /api/admin/orders
-  if (req.method === 'PATCH' && parsedUrl === '/api/admin/orders') {
+  if (req.method === 'PATCH' && isRoute('/api/admin/orders')) {
     const authHeader = req.headers['authorization'] || req.headers['x-admin-token'];
     if (!isValidAdminToken(authHeader)) {
       res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -467,7 +471,7 @@ const requestHandler = (req, res) => {
   // =========================================================================
 
   // API Route: POST /api/checkout-card (Mercado Pago Cartão)
-  if (req.method === 'POST' && parsedUrl === '/api/checkout-card') {
+  if (req.method === 'POST' && isRoute('/api/checkout-card')) {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', async () => {
@@ -599,7 +603,7 @@ const requestHandler = (req, res) => {
   }
 
   // API Route: POST /api/checkout (PIX MisticPay)
-  if (req.method === 'POST' && parsedUrl === '/api/checkout') {
+  if (req.method === 'POST' && isRoute('/api/checkout')) {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', async () => {
