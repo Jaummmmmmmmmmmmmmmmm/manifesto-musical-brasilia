@@ -381,6 +381,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Telefone / WhatsApp formatting ((00) 00000-0000)
+  const telInput = document.getElementById('gw-checkout-telefone');
+  if (telInput) {
+    telInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.substring(0, 11);
+      if (v.length > 6) {
+        v = `(${v.substring(0, 2)}) ${v.substring(2, 7)}-${v.substring(7)}`;
+      } else if (v.length > 2) {
+        v = `(${v.substring(0, 2)}) ${v.substring(2)}`;
+      }
+      e.target.value = v;
+    });
+  }
+
+  // CPF formatting (000.000.000-00)
+  if (cpfInput) {
+    cpfInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.substring(0, 11);
+      if (v.length > 9) {
+        v = `${v.substring(0, 3)}.${v.substring(3, 6)}.${v.substring(6, 9)}-${v.substring(9)}`;
+      } else if (v.length > 6) {
+        v = `${v.substring(0, 3)}.${v.substring(3, 6)}.${v.substring(6)}`;
+      } else if (v.length > 3) {
+        v = `${v.substring(0, 3)}.${v.substring(3)}`;
+      }
+      e.target.value = v;
+    });
+  }
+
   // PIX Countdown timer (15 minutes)
   function startPixCountdown(totalSeconds) {
     if (pixTimer) clearInterval(pixTimer);
@@ -457,6 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nome = document.getElementById('gw-checkout-nome').value.trim();
     const cpf = document.getElementById('gw-checkout-cpf').value.trim();
     const email = document.getElementById('gw-checkout-email').value.trim();
+    const telefone = (document.getElementById('gw-checkout-telefone')?.value || '').trim();
     const endereco = document.getElementById('gw-checkout-endereco').value.trim();
 
     if (!nome) {
@@ -472,12 +504,17 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Por favor, informe um e-mail válido.', 'fa-exclamation-circle');
       return null;
     }
+    const cleanPhone = telefone.replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length < 10) {
+      showToast('Por favor, informe seu WhatsApp com DDD para envio do ingresso.', 'fa-exclamation-circle');
+      return null;
+    }
     if (!endereco) {
       showToast('Por favor, informe seu Endereço Completo.', 'fa-exclamation-circle');
       return null;
     }
 
-    return { nome, cpf: cleanCpf, email, endereco };
+    return { nome, cpf: cleanCpf, email, telefone: cleanPhone, endereco };
   }
 
   // 1. Submit PIX (MisticPay)
@@ -517,6 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nome: customer.nome,
             cpf: customer.cpf,
             email: customer.email,
+            telefone: customer.telefone,
             endereco: customer.endereco,
             amount: finalTotal,
             itemsSummary: itemsList.join(', ')
@@ -603,6 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nome: customer.nome,
             cpf: customer.cpf,
             email: customer.email,
+            telefone: customer.telefone,
             endereco: customer.endereco,
             amount: finalTotal,
             cardNumber,

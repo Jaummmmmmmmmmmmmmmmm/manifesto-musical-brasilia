@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Manifesto Musical Brasília</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-body: #0b0f19;
+      --bg-card: #111827;
+      --bg-card-hover: #172033;
+      --bg-input: #1e293b;
+      --border-color: #243049;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #ff5722;
+      --primary-hover: #f4511e;
+      --primary-glow: rgba(255, 87, 34, 0.25);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.2);
+      --warning: #f59e0b;
+      --warning-glow: rgba(245, 158, 11, 0.2);
+      --danger: #ef4444;
+      --info: #0284c7;
+      --whatsapp: #25d366;
+      --whatsapp-hover: #22bf5b;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* LOGIN CONTAINER */
+    #view-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #1e293b 0%, #0b0f19 70%);
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 40px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(255, 87, 34, 0.12);
+      border: 1px solid rgba(255, 87, 34, 0.3);
+      border-radius: 999px;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+
+    .login-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 13px 14px 13px 42px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 20px var(--primary-glow);
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .login-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+    }
+
+    /* DASHBOARD LAYOUT */
+    #view-dashboard {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .admin-header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      height: 38px;
+      width: auto;
+      border-radius: 6px;
+    }
+
+    .brand-info h1 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 10px var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: #cbd5e1;
+      padding: 9px 15px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: var(--border-color);
+      color: #fff;
+    }
+
+    .btn-action.logout {
+      color: #f87171;
+    }
+    .btn-action.logout:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--danger);
+    }
+
+    /* MAIN CONTENT */
+    .admin-main {
+      padding: 28px;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* METRICS GRID */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      border-color: #3b4d6e;
+    }
+
+    .metric-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .metric-icon.faturamento {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+    .metric-icon.ingressos {
+      background: rgba(255, 87, 34, 0.15);
+      color: var(--primary);
+    }
+    .metric-icon.aprovados {
+      background: rgba(2, 132, 199, 0.15);
+      color: var(--info);
+    }
+    .metric-icon.pendentes {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+    }
+
+    /* TOOLBAR */
+    .table-toolbar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 14px 10px 38px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .filter-pills {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill:hover {
+      color: #fff;
+      border-color: #475569;
+    }
+
+    .pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+
+    /* ORDERS TABLE / LIST */
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+      min-width: 960px;
+    }
+
+    .orders-table th {
+      background: #141d2f;
+      padding: 14px 18px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .orders-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid #1c263b;
+      vertical-align: middle;
+    }
+
+    .orders-table tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .badge-pix {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .badge-card {
+      background: rgba(2, 132, 199, 0.15);
+      border: 1px solid rgba(2, 132, 199, 0.3);
+      color: #38bdf8;
+    }
+
+    .badge-aprovado {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+
+    .badge-pendente {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid #f59e0b;
+    }
+
+    .badge-ticket-enviado {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+
+    .badge-ticket-pendente {
+      background: rgba(255, 87, 34, 0.15);
+      color: #ff7043;
+      border: 1px solid #ff5722;
+      animation: blink 2.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.65; }
+    }
+
+    .client-name {
+      font-weight: 700;
+      color: #fff;
+      font-size: 14.5px;
+      margin-bottom: 3px;
+    }
+
+    .client-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .client-sub a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
+
+    .client-sub a:hover {
+      text-decoration: underline;
+    }
+
+    .order-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #94a3b8;
+      background: #1e293b;
+      padding: 3px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .order-id:hover {
+      color: #fff;
+      background: #334155;
+    }
+
+    .order-amount {
+      font-weight: 800;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    .order-items {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      margin-top: 3px;
+      max-width: 240px;
+      line-height: 1.35;
+    }
+
+    /* ACTION BUTTONS */
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-dispatch-wpp {
+      background: #25d366;
+      color: #052e16;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+    }
+
+    .btn-dispatch-wpp:hover {
+      background: #22bf5b;
+      transform: translateY(-1px);
+    }
+
+    .btn-dispatch-email {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      color: #38bdf8;
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-dispatch-email:hover {
+      background: #334155;
+      color: #fff;
+    }
+
+    .btn-toggle-ticket {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      color: #cbd5e1;
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle-ticket:hover {
+      background: #334155;
+      color: #fff;
+    }
+
+    .btn-toggle-ticket.done {
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      padding: 50px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 40px;
+      margin-bottom: 12px;
+      color: #334155;
+    }
+
+    /* MODAL DETALHES */
+    .admin-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .admin-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 580px;
+      padding: 28px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    /* TOAST */
+    .toast-notice {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 2000;
+    }
+
+    .toast-notice.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       TELA 1: LOGIN ADMINISTRATIVO
+       ========================================================================= -->
+  <div id="view-login">
+    <div class="login-card">
+      <div class="login-badge">
+        <i class="fas fa-shield-alt"></i> Acesso Restrito
+      </div>
+      <h2 class="login-title">Manifesto Musical</h2>
+      <p class="login-subtitle">Painel de Controle de Pedidos & Envio de Ingressos</p>
+
+      <div class="login-error" id="login-error-box">
+        <i class="fas fa-exclamation-circle"></i> <span id="login-error-msg">Senha incorreta.</span>
+      </div>
+
+      <form id="form-login">
+        <div class="form-group">
+          <label for="admin-password">Senha de Administrador</label>
+          <div class="input-wrapper">
+            <i class="fas fa-key"></i>
+            <input type="password" id="admin-password" class="form-input" placeholder="Digite sua senha..." required autofocus autocomplete="current-password">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn-login">
+          <i class="fas fa-sign-in-alt"></i> Acessar Painel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TELA 2: DASHBOARD ADMINISTRATIVO
+       ========================================================================= -->
+  <div id="view-dashboard">
+    <!-- Top Header -->
+    <header class="admin-header">
+      <div class="brand-area">
+        <img src="assets/logo-guiche.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+        <div class="brand-info">
+          <h1>Manifesto Musical Brasília &bull; Admin</h1>
+          <p><span class="status-dot"></span> Conectado &bull; Henrique & Juliano Estádio Mané Garrincha</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn-action" id="btn-refresh-orders" title="Atualizar Pedidos">
+          <i class="fas fa-sync-alt" id="refresh-icon"></i> Atualizar
+        </button>
+        <button type="button" class="btn-action logout" id="btn-logout" title="Sair do painel">
+          <i class="fas fa-power-off"></i> Sair
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      
+      <!-- Metrics Overview -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Faturamento Total</div>
+            <div class="metric-value" id="metric-faturamento">R$ 0,00</div>
+            <div class="metric-sub" id="metric-sub-faturamento">Pagamentos aprovados</div>
+          </div>
+          <div class="metric-icon faturamento">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Ingressos Vendidos</div>
+            <div class="metric-value" id="metric-ingressos">0</div>
+            <div class="metric-sub">Todos os setores</div>
+          </div>
+          <div class="metric-icon ingressos">
+            <i class="fas fa-ticket-alt"></i>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Pedidos Aprovados</div>
+            <div class="metric-value" id="metric-aprovados">0</div>
+            <div class="metric-sub" id="metric-taxa-aprovados">Taxa de conversão</div>
+          </div>
+          <div class="metric-icon aprovados">
+            <i class="fas fa-check-circle"></i>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Aguardando Envio</div>
+            <div class="metric-value" id="metric-pendentes-envio" style="color: #ff7043;">0</div>
+            <div class="metric-sub">Ingressos para despachar</div>
+          </div>
+          <div class="metric-icon pendentes">
+            <i class="fas fa-paper-plane"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- Toolbar & Filters -->
+      <section class="table-toolbar">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="filter-search" class="search-input" placeholder="Buscar por Nome, CPF, WhatsApp, E-mail ou ID...">
+        </div>
+
+        <div class="filter-pills">
+          <button type="button" class="pill active" data-filter="all">Todos (<span id="count-all">0</span>)</button>
+          <button type="button" class="pill" data-filter="aprovados">Aprovados (<span id="count-aprovados">0</span>)</button>
+          <button type="button" class="pill" data-filter="pendentes">PIX Pendente (<span id="count-pendentes">0</span>)</button>
+          <button type="button" class="pill" data-filter="pendentes-envio">A Enviar (<span id="count-a-enviar">0</span>)</button>
+          <button type="button" class="pill" data-filter="enviados">Enviados (<span id="count-enviados">0</span>)</button>
+          <button type="button" class="btn-action" id="btn-export-csv" style="padding: 7px 12px; font-size: 13px;">
+            <i class="fas fa-file-excel" style="color: #10b981;"></i> Exportar CSV
+          </button>
+        </div>
+      </section>
+
+      <!-- Orders Table -->
+      <section class="table-container">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>ID / Data</th>
+              <th>Comprador & Contato</th>
+              <th>Ingressos & Total</th>
+              <th>Pagamento</th>
+              <th>Status do Ingresso</th>
+              <th style="text-align: right;">Ações de Envio</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody">
+            <!-- Renderizado via JavaScript -->
+          </tbody>
+        </table>
+
+        <div id="empty-state" class="empty-state" style="display: none;">
+          <i class="fas fa-inbox"></i>
+          <p>Nenhum pedido encontrado para o filtro aplicado.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal Detalhes do Pedido -->
+  <div class="admin-modal-backdrop" id="order-modal">
+    <div class="admin-modal">
+      <button type="button" class="modal-close" id="modal-close-btn">&times;</button>
+      <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 14px;" id="modal-order-title">Detalhes do Pedido</h3>
+      <div id="modal-order-body" style="font-size: 13.5px; line-height: 1.6; color: #cbd5e1;"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notice" id="admin-toast">
+    <i class="fas fa-check-circle" style="color: var(--success)"></i>
+    <span id="toast-text">Notificação</span>
+  </div>
+
+  <script>
+    // Configuration & State
+    const API_BASE = window.location.origin;
+    let authToken = localStorage.getItem('mm_admin_token') || '';
+    let rawOrders = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // DOM Elements
+    const viewLogin = document.getElementById('view-login');
+    const viewDashboard = document.getElementById('view-dashboard');
+    const formLogin = document.getElementById('form-login');
+    const inputPassword = document.getElementById('admin-password');
+    const loginErrorBox = document.getElementById('login-error-box');
+    const loginErrorMsg = document.getElementById('login-error-msg');
+    const btnLogin = document.getElementById('btn-login');
+    const btnLogout = document.getElementById('btn-logout');
+    const btnRefresh = document.getElementById('btn-refresh-orders');
+    const refreshIcon = document.getElementById('refresh-icon');
+
+    const ordersTbody = document.getElementById('orders-tbody');
+    const emptyState = document.getElementById('empty-state');
+    const filterSearch = document.getElementById('filter-search');
+    const filterPills = document.querySelectorAll('.pill');
+
+    const orderModal = document.getElementById('order-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalBody = document.getElementById('modal-order-body');
+    const modalTitle = document.getElementById('modal-order-title');
+
+    const adminToast = document.getElementById('admin-toast');
+    const toastText = document.getElementById('toast-text');
+
+    // Show Toast notification
+    function showToast(msg, icon = 'fa-check-circle', color = 'var(--success)') {
+      toastText.textContent = msg;
+      adminToast.querySelector('i').className = `fas ${icon}`;
+      adminToast.querySelector('i').style.color = color;
+      adminToast.classList.add('show');
+      setTimeout(() => adminToast.classList.remove('show'), 3500);
+    }
+
+    // Format Money
+    function formatMoney(val) {
+      return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // Format Date
+    function formatDate(isoStr) {
+      if (!isoStr) return '-';
+      const d = new Date(isoStr);
+      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' às ' +
+             d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Format Phone
+    function formatPhone(phone) {
+      const clean = String(phone || '').replace(/\D/g, '');
+      if (clean.length === 11) {
+        return `(${clean.substring(0,2)}) ${clean.substring(2,7)}-${clean.substring(7)}`;
+      }
+      if (clean.length === 10) {
+        return `(${clean.substring(0,2)}) ${clean.substring(2,6)}-${clean.substring(6)}`;
+      }
+      return phone || 'Não informado';
+    }
+
+    // Format CPF
+    function formatCpf(cpf) {
+      const clean = String(cpf || '').replace(/\D/g, '');
+      if (clean.length === 11) {
+        return `${clean.substring(0,3)}.${clean.substring(3,6)}.${clean.substring(6,9)}-${clean.substring(9)}`;
+      }
+      return cpf || '-';
+    }
+
+    // Initialize View based on Auth
+    if (authToken) {
+      showDashboard();
+    } else {
+      showLogin();
+    }
+
+    function showLogin() {
+      viewLogin.style.display = 'flex';
+      viewDashboard.style.display = 'none';
+    }
+
+    function showDashboard() {
+      viewLogin.style.display = 'none';
+      viewDashboard.style.display = 'flex';
+      loadOrders();
+    }
+
+    // Handle Login Submit
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginErrorBox.style.display = 'none';
+      const password = inputPassword.value.trim();
+      if (!password) return;
+
+      btnLogin.disabled = true;
+      btnLogin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success && data.token) {
+          authToken = data.token;
+          localStorage.setItem('mm_admin_token', authToken);
+          showToast('Bem-vindo ao Painel Administrativo!');
+          showDashboard();
+        } else {
+          loginErrorMsg.textContent = data.error || 'Senha incorreta. Tente novamente.';
+          loginErrorBox.style.display = 'flex';
+        }
+      } catch (err) {
+        loginErrorMsg.textContent = 'Erro de conexão com o servidor.';
+        loginErrorBox.style.display = 'flex';
+      } finally {
+        btnLogin.disabled = false;
+        btnLogin.innerHTML = '<i class="fas fa-sign-in-alt"></i> Acessar Painel';
+      }
+    });
+
+    // Handle Logout
+    btnLogout.addEventListener('click', () => {
+      authToken = '';
+      localStorage.removeItem('mm_admin_token');
+      showToast('Sessão encerrada com sucesso.', 'fa-info-circle', '#38bdf8');
+      showLogin();
+    });
+
+    // Fetch Orders from Server
+    async function loadOrders() {
+      refreshIcon.classList.add('fa-spin');
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/orders`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+
+        if (res.status === 401) {
+          showToast('Sessão expirada. Faça login novamente.', 'fa-lock', 'var(--danger)');
+          btnLogout.click();
+          return;
+        }
+
+        const data = await res.json();
+        if (data.success && Array.isArray(data.orders)) {
+          rawOrders = data.orders;
+          updateMetrics();
+          renderOrders();
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Falha ao sincronizar pedidos.', 'fa-times-circle', 'var(--danger)');
+      } finally {
+        setTimeout(() => refreshIcon.classList.remove('fa-spin'), 400);
+      }
+    }
+
+    btnRefresh.addEventListener('click', loadOrders);
+
+    // Update Metrics Cards
+    function updateMetrics() {
+      let totalFaturamento = 0;
+      let totalIngressos = 0;
+      let aprovados = 0;
+      let pendentesPix = 0;
+      let pendentesEnvio = 0;
+      let enviados = 0;
+
+      rawOrders.forEach(o => {
+        const isApproved = o.paymentStatus === 'Aprovado';
+        if (isApproved) {
+          totalFaturamento += Number(o.amount || 0);
+          aprovados++;
+          if (o.ticketStatus === 'Enviado') {
+            enviados++;
+          } else {
+            pendentesEnvio++;
+          }
+        } else if (o.paymentStatus === 'Pendente') {
+          pendentesPix++;
+        }
+
+        // Tenta estimar quantidade de ingressos
+        const matches = (o.itemsSummary || '').match(/(\d+)x/g);
+        if (matches) {
+          matches.forEach(m => totalIngressos += parseInt(m));
+        } else {
+          totalIngressos += 1;
+        }
+      });
+
+      document.getElementById('metric-faturamento').textContent = formatMoney(totalFaturamento);
+      document.getElementById('metric-ingressos').textContent = totalIngressos;
+      document.getElementById('metric-aprovados').textContent = aprovados;
+      document.getElementById('metric-taxa-aprovados').textContent = rawOrders.length > 0 
+        ? `${Math.round((aprovados / rawOrders.length) * 100)}% de conversão`
+        : '0%';
+      document.getElementById('metric-pendentes-envio').textContent = pendentesEnvio;
+
+      // Counters on pills
+      document.getElementById('count-all').textContent = rawOrders.length;
+      document.getElementById('count-aprovados').textContent = aprovados;
+      document.getElementById('count-pendentes').textContent = pendentesPix;
+      document.getElementById('count-a-enviar').textContent = pendentesEnvio;
+      document.getElementById('count-enviados').textContent = enviados;
+    }
+
+    // Render Orders Table
+    function renderOrders() {
+      const q = searchQuery.toLowerCase().trim();
+
+      const filtered = rawOrders.filter(o => {
+        // Filter by pill
+        if (currentFilter === 'aprovados' && o.paymentStatus !== 'Aprovado') return false;
+        if (currentFilter === 'pendentes' && o.paymentStatus !== 'Pendente') return false;
+        if (currentFilter === 'pendentes-envio' && (o.paymentStatus !== 'Aprovado' || o.ticketStatus === 'Enviado')) return false;
+        if (currentFilter === 'enviados' && o.ticketStatus !== 'Enviado') return false;
+
+        // Search query
+        if (q) {
+          const nome = (o.customer?.nome || '').toLowerCase();
+          const cpf = (o.customer?.cpf || '').toLowerCase();
+          const email = (o.customer?.email || '').toLowerCase();
+          const telefone = (o.customer?.telefone || '').toLowerCase();
+          const id = (o.id || '').toLowerCase();
+          const items = (o.itemsSummary || '').toLowerCase();
+
+          return nome.includes(q) || cpf.includes(q) || email.includes(q) || telefone.includes(q) || id.includes(q) || items.includes(q);
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        ordersTbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      ordersTbody.innerHTML = filtered.map(order => {
+        const c = order.customer || {};
+        const isPix = (order.paymentMethod || '').toUpperCase().includes('PIX');
+        const isApproved = order.paymentStatus === 'Aprovado';
+        const isTicketSent = order.ticketStatus === 'Enviado';
+
+        const cleanPhone = (c.telefone || '').replace(/\D/g, '');
+        const wppUrl = cleanPhone.length >= 10
+          ? `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(buildTicketMessage(order))}`
+          : null;
+
+        const emailUrl = c.email
+          ? `mailto:${c.email}?subject=${encodeURIComponent('Seus Ingressos - Manifesto Musical Brasília')}&body=${encodeURIComponent(buildTicketMessage(order))}`
+          : null;
+
+        return `
+          <tr>
+            <td>
+              <span class="order-id" onclick="copyText('${order.id}', 'ID do pedido copiado!')" title="Clique para copiar">
+                ${order.id} <i class="fas fa-copy" style="font-size: 10px; margin-left: 2px;"></i>
+              </span>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                <i class="far fa-clock"></i> ${formatDate(order.createdAt)}
+              </div>
+            </td>
+
+            <td>
+              <div class="client-name">${c.nome || 'Cliente'}</div>
+              <div class="client-sub">
+                <span><i class="fas fa-id-card"></i> ${formatCpf(c.cpf)}</span>
+                ${cleanPhone ? `
+                  <a href="${wppUrl}" target="_blank" style="color: #34d399; font-weight: 600;">
+                    <i class="fab fa-whatsapp"></i> ${formatPhone(c.telefone)}
+                  </a>
+                ` : '<span style="color: #64748b;">Sem fone</span>'}
+              </div>
+              <div class="client-sub" style="margin-top: 3px;">
+                <span><i class="fas fa-envelope"></i> ${c.email || '-'}</span>
+              </div>
+            </td>
+
+            <td>
+              <div class="order-amount">${formatMoney(order.amount)}</div>
+              <div class="order-items" title="${order.itemsSummary || ''}">
+                <i class="fas fa-ticket-alt" style="color: var(--primary); margin-right: 4px;"></i>
+                ${order.itemsSummary || 'Ingresso Manifesto Musical'}
+              </div>
+            </td>
+
+            <td>
+              <div style="margin-bottom: 4px;">
+                <span class="badge ${isPix ? 'badge-pix' : 'badge-card'}">
+                  <i class="${isPix ? 'fas fa-bolt' : 'fas fa-credit-card'}"></i>
+                  ${order.paymentMethod || 'PIX'}
+                </span>
+              </div>
+              <span class="badge ${isApproved ? 'badge-aprovado' : (order.paymentStatus === 'Pendente' ? 'badge-pendente' : '')}">
+                ${isApproved ? '<i class="fas fa-check"></i> Aprovado' : '<i class="fas fa-clock"></i> ' + (order.paymentStatus || 'Pendente')}
+              </span>
+            </td>
+
+            <td>
+              <span class="badge ${isTicketSent ? 'badge-ticket-enviado' : 'badge-ticket-pendente'}">
+                <i class="${isTicketSent ? 'fas fa-check-double' : 'fas fa-hourglass-half'}"></i>
+                ${isTicketSent ? 'Ingresso Enviado' : 'Pendente de Envio'}
+              </span>
+              ${isTicketSent && order.ticketSentAt ? `
+                <div style="font-size: 11px; color: #10b981; margin-top: 4px;">
+                  Enviado em ${formatDate(order.ticketSentAt)}
+                </div>
+              ` : ''}
+            </td>
+
+            <td style="text-align: right;">
+              <div class="actions-cell" style="justify-content: flex-end;">
+                ${wppUrl ? `
+                  <a href="${wppUrl}" target="_blank" class="btn-dispatch-wpp" title="Enviar Ingresso no WhatsApp">
+                    <i class="fab fa-whatsapp" style="font-size: 14px;"></i> WhatsApp
+                  </a>
+                ` : ''}
+
+                ${emailUrl ? `
+                  <a href="${emailUrl}" class="btn-dispatch-email" title="Enviar por E-mail">
+                    <i class="fas fa-envelope"></i>
+                  </a>
+                ` : ''}
+
+                <button type="button" class="btn-toggle-ticket ${isTicketSent ? 'done' : ''}" 
+                  onclick="toggleTicketStatus('${order.id}', '${isTicketSent ? 'Pendente' : 'Enviado'}')"
+                  title="${isTicketSent ? 'Marcar como Pendente de Envio' : 'Marcar como Ingresso Enviado'}">
+                  <i class="fas ${isTicketSent ? 'fa-undo' : 'fa-check'}"></i>
+                  ${isTicketSent ? 'Desmarcar' : 'Marcar Enviado'}
+                </button>
+
+                <button type="button" class="btn-action" style="padding: 7px 9px;" onclick="viewOrderDetails('${order.id}')" title="Ver Detalhes do Pedido">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Build WhatsApp / Email message ready for ticket dispatch
+    function buildTicketMessage(order) {
+      const c = order.customer || {};
+      const firstName = (c.nome || 'Cliente').split(' ')[0];
+      return `Olá ${firstName}! Tudo bem? 🎟️✨
+
+Aqui é da equipe oficial do *Manifesto Musical Brasília* (Henrique & Juliano no Estádio Mané Garrincha).
+
+Confirmamos o recebimento e aprovação do seu pedido! Seguem as informações do seu ingresso:
+
+📄 *Pedido:* #${order.id}
+👤 *Titular:* ${c.nome || '-'}
+🪪 *CPF:* ${formatCpf(c.cpf)}
+🎟️ *Setor / Ingressos:* ${order.itemsSummary || 'Ingresso'}
+💵 *Total Pago:* ${formatMoney(order.amount)}
+💳 *Pagamento:* ${order.paymentMethod || 'PIX'} (Confirmado)
+
+📍 *Local:* Arena BRB Mané Garrincha - Brasília/DF
+📅 *Abertura dos Portões:* Acompanhe no cronograma oficial.
+
+Qualquer dúvida ou suporte, basta responder esta mensagem. Tenha um excelente show! 🎶🙌`;
+    }
+
+    // Toggle Ticket Status (Enviado / Pendente)
+    async function toggleTicketStatus(orderId, newStatus) {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/orders`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            orderId,
+            ticketStatus: newStatus
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          const target = rawOrders.find(o => o.id === orderId);
+          if (target) {
+            target.ticketStatus = newStatus;
+            if (newStatus === 'Enviado') target.ticketSentAt = new Date().toISOString();
+          }
+          updateMetrics();
+          renderOrders();
+          showToast(newStatus === 'Enviado' ? 'Ingresso marcado como enviado!' : 'Status revertido para pendente.');
+        } else {
+          showToast(data.error || 'Erro ao atualizar status.', 'fa-times', 'var(--danger)');
+        }
+      } catch (err) {
+        showToast('Erro de conexão ao salvar status.', 'fa-times', 'var(--danger)');
+      }
+    }
+
+    // View Order Details Modal
+    function viewOrderDetails(orderId) {
+      const o = rawOrders.find(item => item.id === orderId);
+      if (!o) return;
+
+      const c = o.customer || {};
+      modalTitle.innerHTML = `<i class="fas fa-receipt" style="color: var(--primary); margin-right: 8px;"></i> Pedido #${o.id}`;
+
+      modalBody.innerHTML = `
+        <div style="background: #1e293b; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span><strong>Data da Compra:</strong></span>
+            <span>${formatDate(o.createdAt)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span><strong>Status do Pagamento:</strong></span>
+            <span style="color: #10b981; font-weight: 700;">${o.paymentStatus || 'Aprovado'}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span><strong>Método:</strong></span>
+            <span>${o.paymentMethod || 'PIX'} (${o.paymentGateway || 'MisticPay'})</span>
+          </div>
+        </div>
+
+        <h4 style="color: #fff; font-size: 14px; margin-bottom: 8px;">Dados do Comprador:</h4>
+        <div style="background: #141d2f; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+          <p><strong>Nome:</strong> ${c.nome || '-'}</p>
+          <p><strong>CPF:</strong> ${formatCpf(c.cpf)}</p>
+          <p><strong>WhatsApp:</strong> ${formatPhone(c.telefone)}</p>
+          <p><strong>E-mail:</strong> ${c.email || '-'}</p>
+          <p><strong>Endereço:</strong> ${c.endereco || '-'}</p>
+        </div>
+
+        <h4 style="color: #fff; font-size: 14px; margin-bottom: 8px;">Ingressos Adquiridos:</h4>
+        <div style="background: #141d2f; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+          <p style="color: #fff; font-weight: 600; margin-bottom: 4px;">${o.itemsSummary || 'Ingressos'}</p>
+          <p style="font-size: 16px; font-weight: 800; color: var(--primary); margin-top: 6px;">Total: ${formatMoney(o.amount)}</p>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn-action" onclick="copyText(buildTicketMessage(rawOrders.find(x => x.id === '${o.id}')), 'Mensagem copiada para o WhatsApp!')">
+            <i class="fas fa-copy"></i> Copiar Mensagem Pronta
+          </button>
+        </div>
+      `;
+
+      orderModal.style.display = 'flex';
+    }
+
+    modalCloseBtn.addEventListener('click', () => {
+      orderModal.style.display = 'none';
+    });
+    orderModal.addEventListener('click', (e) => {
+      if (e.target === orderModal) orderModal.style.display = 'none';
+    });
+
+    // Copy text to clipboard helper
+    function copyText(text, successMsg) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(successMsg || 'Copiado para a área de transferência!');
+      }).catch(() => {
+        showToast('Não foi possível copiar.', 'fa-exclamation', 'var(--danger)');
+      });
+    }
+
+    // Filter pills event listeners
+    filterPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        filterPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentFilter = pill.getAttribute('data-filter');
+        renderOrders();
+      });
+    });
+
+    // Search input listener with debounce
+    filterSearch.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderOrders();
+    });
+
+    // Export CSV
+    document.getElementById('btn-export-csv').addEventListener('click', () => {
+      if (rawOrders.length === 0) {
+        showToast('Nenhum pedido para exportar.', 'fa-exclamation', 'var(--danger)');
+        return;
+      }
+
+      let csv = 'ID Pedido;Data;Nome;CPF;WhatsApp;Email;Endereco;Itens;Valor;Forma Pagamento;Status Pagamento;Status Ingresso\n';
+      rawOrders.forEach(o => {
+        const c = o.customer || {};
+        csv += `"${o.id}";"${o.createdAt}";"${c.nome || ''}";"${c.cpf || ''}";"${c.telefone || ''}";"${c.email || ''}";"${(c.endereco || '').replace(/"/g, '""')}";"${(o.itemsSummary || '').replace(/"/g, '""')}";"${o.amount}";"${o.paymentMethod || ''}";"${o.paymentStatus || ''}";"${o.ticketStatus || ''}"\n`;
+      });
+
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `pedidos-manifesto-musical-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      showToast('Planilha CSV baixada com sucesso!', 'fa-file-excel');
+    });
+  </script>
+</body>
+</html>
