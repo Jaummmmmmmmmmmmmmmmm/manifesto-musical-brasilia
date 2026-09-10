@@ -8,11 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const state = {
     demoMode: true, // Allow user to simulate ticket selection
     tickets: {
-      camarote_r2: { name: 'Camarote R2 Open Bar (18+)', price: 480.00, qty: 0 },
-      camarote_open: { name: 'Camarote Open (18+)', price: 360.00, qty: 0 },
-      front_stage: { name: 'Front Stage', price: 260.00, qty: 0 },
-      arq_inferior_meia: { name: 'Arquibancada Inferior (Meia / Solidária)', price: 160.00, qty: 0 },
-      arq_inferior_inteira: { name: 'Arquibancada Inferior (Inteira)', price: 320.00, qty: 0 },
+      camarote_r2: { name: 'Camarote R2 Open Bar (18+)', price: 899.00, qty: 0 },
+      camarote_open: { name: 'Camarote Open (18+)', price: 759.00, qty: 0 },
+      front_stage_meia: { name: 'Front Stage (Meia / Solidária)', price: 400.00, qty: 0 },
+      front_stage_inteira: { name: 'Front Stage (Inteira)', price: 800.00, qty: 0 },
+      arq_inferior_meia: { name: 'Arquibancada Inferior (Meia / Solidária)', price: 275.00, qty: 0 },
+      arq_inferior_inteira: { name: 'Arquibancada Inferior (Inteira)', price: 550.00, qty: 0 },
       arq_superior_meia: { name: 'Arquibancada Superior (Meia / Solidária)', price: 90.00, qty: 0 },
       arq_superior_inteira: { name: 'Arquibancada Superior (Inteira)', price: 180.00, qty: 0 },
     },
