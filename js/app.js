@@ -596,6 +596,31 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Meta Pixel tracking error:', e);
           }
           showToast('Cobrança PIX gerada com sucesso!', 'fa-qrcode');
+
+          // Auto-check payment status every 4s
+          if (result.orderId) {
+            const currentOrderId = result.orderId;
+            const pixPoller = setInterval(async () => {
+              if (step2.style.display === 'none') {
+                clearInterval(pixPoller);
+                return;
+              }
+              try {
+                const checkRes = await fetch(`/api/checkout/status?orderId=${currentOrderId}`);
+                const checkData = await checkRes.json();
+                if (checkData.success && checkData.paymentStatus === 'Aprovado') {
+                  clearInterval(pixPoller);
+                  if (step2) step2.style.display = 'none';
+                  if (step3) step3.style.display = 'block';
+                  const transEl = document.getElementById('gw-card-success-transid');
+                  const emailEl = document.getElementById('gw-card-success-email');
+                  if (transEl) transEl.innerHTML = `<strong>Transação PIX:</strong> #${currentOrderId}`;
+                  if (emailEl) emailEl.textContent = customer.email;
+                  showToast('Pagamento PIX Aprovado!', 'fa-check-circle');
+                }
+              } catch (e) {}
+            }, 4000);
+          }
         } else {
           showToast(result.error || 'Não foi possível gerar a cobrança PIX. Tente novamente.', 'fa-exclamation-triangle');
         }

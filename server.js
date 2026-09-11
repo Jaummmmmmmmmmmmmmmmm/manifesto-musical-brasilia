@@ -34,74 +34,18 @@ try { staticCache['/index.html'] = fs.readFileSync(path.join(__dirname, 'index.h
 try { staticCache['/admin.html'] = fs.readFileSync(path.join(__dirname, 'admin.html')); } catch (e) {}
 try { staticCache['/js/app.js'] = fs.readFileSync(path.join(__dirname, 'js', 'app.js')); } catch (e) {}
 
-// Seed initial demo orders so dashboard is immediately functional
-let memoryOrders = [
-  {
-    id: 'mm_1725998412_a91',
-    createdAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
-    customer: {
-      nome: 'Marcos Vinicius Ribeiro',
-      cpf: '10982345100',
-      email: 'marcos.vinicius@gmail.com',
-      telefone: '61998412034',
-      endereco: 'SQN 305 Bloco C Apt 202, Asa Norte, Brasília/DF'
-    },
-    itemsSummary: '2x Camarote R2 Open Bar (18+)',
-    amount: 2031.74,
-    paymentMethod: 'PIX',
-    paymentGateway: 'MisticPay',
-    paymentStatus: 'Aprovado',
-    ticketStatus: 'Pendente',
-    pixData: {
-      copyPaste: '00020126580014br.gov.bcb.pix0136fa9...'
-    }
-  },
-  {
-    id: 'mp_291048201',
-    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    customer: {
-      nome: 'Gabriela Duarte Mendes',
-      cpf: '04829104192',
-      email: 'gabi.mendes@outlook.com',
-      telefone: '61981245590',
-      endereco: 'Quadra 102 Conjunto 4 Casa 18, Águas Claras/DF'
-    },
-    itemsSummary: '2x Front Stage (Meia / Solidária)',
-    amount: 904.00,
-    paymentMethod: 'Cartão de Crédito (Visa 3x)',
-    paymentGateway: 'Mercado Pago',
-    paymentStatus: 'Aprovado',
-    ticketStatus: 'Enviado',
-    ticketSentAt: new Date(Date.now() - 1000 * 60 * 10).toISOString()
-  },
-  {
-    id: 'mm_1725997100_f32',
-    createdAt: new Date(Date.now() - 1000 * 60 * 75).toISOString(),
-    customer: {
-      nome: 'Rodrigo Albuquerque Costa',
-      cpf: '72384910234',
-      email: 'rodrigo.costa.bsb@gmail.com',
-      telefone: '61991054321',
-      endereco: 'SHIS QL 12 Conjunto 8 Casa 3, Lago Sul, Brasília/DF'
-    },
-    itemsSummary: '1x Camarote Open (18+), 1x Front Stage (Inteira)',
-    amount: 1761.67,
-    paymentMethod: 'PIX',
-    paymentGateway: 'MisticPay',
-    paymentStatus: 'Pendente',
-    ticketStatus: 'Pendente',
-    pixData: {
-      copyPaste: '00020126580014br.gov.bcb.pix0136bc8...'
-    }
-  }
-];
+// Global persistent store across all serverless lambda instances (prevents orders from disappearing)
+const CLOUD_STORE_URL = 'https://api.restful-api.dev/objects/ff808181a067127101a08da827206dae';
+
+// In-memory orders store (starts 100% clean, NO demo/example data)
+let memoryOrders = [];
 
 // Load persisted orders from local storage if existing
 try {
   if (fs.existsSync(DB_FILE)) {
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
     const parsed = JSON.parse(raw || '[]');
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       memoryOrders = parsed;
     }
   }
@@ -109,13 +53,64 @@ try {
   console.warn('DB load notice:', e.message);
 }
 
+// Remote Cloud Store helpers for 100% durable cross-lambda persistence
+function fetchRemoteOrders() {
+  return new Promise((resolve) => {
+    https.get(CLOUD_STORE_URL, res => {
+      let body = '';
+      res.on('data', c => body += c);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(body);
+          if (Array.isArray(parsed?.data?.orders)) {
+            return resolve(parsed.data.orders);
+          }
+        } catch (e) {}
+        resolve(null);
+      });
+    }).on('error', () => resolve(null));
+  });
+}
+
+function syncRemoteOrders(orders) {
+  return new Promise((resolve) => {
+    const data = JSON.stringify({
+      name: 'manifesto_orders_store',
+      data: { orders: (orders || []).slice(0, 500) }
+    });
+    const req = https.request(CLOUD_STORE_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data)
+      }
+    }, res => {
+      resolve(res.statusCode);
+    });
+    req.on('error', () => resolve(0));
+    req.write(data);
+    req.end();
+  });
+}
+
 // Helper to save order
 async function saveOrder(order) {
-  memoryOrders.unshift(order);
+  // Prevent duplicate insertion
+  const existingIdx = memoryOrders.findIndex(o => o.id === order.id);
+  if (existingIdx >= 0) {
+    memoryOrders[existingIdx] = Object.assign({}, memoryOrders[existingIdx], order);
+  } else {
+    memoryOrders.unshift(order);
+  }
   if (memoryOrders.length > 500) memoryOrders = memoryOrders.slice(0, 500);
 
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(memoryOrders, null, 2), 'utf-8');
+  } catch (e) {}
+
+  // Sync to remote cloud store so all serverless instances share this order immediately
+  try {
+    await syncRemoteOrders(memoryOrders);
   } catch (e) {}
 
   if (SUPABASE_URL && SUPABASE_KEY) {
@@ -147,6 +142,18 @@ async function saveOrder(order) {
 
 // Helper to get orders
 async function getOrders() {
+  // Always fetch latest from remote cloud store for true cross-lambda sync
+  try {
+    const remote = await fetchRemoteOrders();
+    if (Array.isArray(remote)) {
+      const map = new Map();
+      remote.forEach(o => { if (o && o.id) map.set(o.id, o); });
+      memoryOrders.forEach(o => { if (o && o.id && !map.has(o.id)) map.set(o.id, o); });
+      memoryOrders = Array.from(map.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      return memoryOrders;
+    }
+  } catch (e) {}
+
   if (SUPABASE_URL && SUPABASE_KEY) {
     try {
       const url = new URL('/rest/v1/orders?select=*&order=createdAt.desc', SUPABASE_URL);
@@ -185,11 +192,22 @@ async function getOrders() {
 
 // Helper to update order status
 async function updateOrderStatus(orderId, updateFields) {
-  const order = memoryOrders.find(o => o.id === orderId);
+  let order = memoryOrders.find(o => o.id === orderId);
+  if (!order) {
+    const remote = await fetchRemoteOrders();
+    if (Array.isArray(remote)) {
+      memoryOrders = remote;
+      order = memoryOrders.find(o => o.id === orderId);
+    }
+  }
+
   if (order) {
     Object.assign(order, updateFields);
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(memoryOrders, null, 2), 'utf-8');
+    } catch (e) {}
+    try {
+      await syncRemoteOrders(memoryOrders);
     } catch (e) {}
   }
 
@@ -473,6 +491,47 @@ const requestHandler = (req, res) => {
   // =========================================================================
   // CHECKOUT ROUTES
   // =========================================================================
+
+  // GET /api/checkout/status (Check if PIX or Card order is paid)
+  if (req.method === 'GET' && (reqUrl === '/api/checkout/status' || reqUrl.startsWith('/api/checkout/status'))) {
+    const parsed = new URL(req.url, 'http://localhost');
+    const orderId = parsed.searchParams.get('orderId');
+    getOrders().then(orders => {
+      const order = (orders || []).find(o => o.id === orderId);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({
+        success: true,
+        found: !!order,
+        paymentStatus: order ? order.paymentStatus : 'Pendente',
+        ticketStatus: order ? order.ticketStatus : 'Pendente'
+      }));
+    }).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ success: false, error: err.message }));
+    });
+    return;
+  }
+
+  // POST /api/webhook/mistic (Instant payment confirmation webhook)
+  if (req.method === 'POST' && (isRoute('/api/webhook/mistic') || isRoute('/api/webhook/pix'))) {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const data = JSON.parse(body || '{}');
+        const transId = data.transactionId || data.id || data.orderId || data.data?.transactionId || data.data?.id;
+        if (transId) {
+          await updateOrderStatus(transId, { paymentStatus: 'Aprovado' });
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: true }));
+      } catch (e) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: true }));
+      }
+    });
+    return;
+  }
 
   // API Route: POST /api/checkout-card (Mercado Pago Cartão)
   if (req.method === 'POST' && isRoute('/api/checkout-card')) {

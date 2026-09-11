@@ -985,6 +985,33 @@
       return cpf || '-';
     }
 
+    // Local Storage Persistent Cache (prevents orders from ever disappearing from admin view)
+    const LOCAL_ORDERS_CACHE_KEY = 'manifesto_admin_orders_v3';
+    function getStoredOrders() {
+      try {
+        const raw = localStorage.getItem(LOCAL_ORDERS_CACHE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    function saveStoredOrders(list) {
+      try {
+        localStorage.setItem(LOCAL_ORDERS_CACHE_KEY, JSON.stringify(list || []));
+      } catch (e) {}
+    }
+    function mergeOrders(localList, incomingList) {
+      const map = new Map();
+      (localList || []).forEach(o => { if (o && o.id) map.set(o.id, o); });
+      (incomingList || []).forEach(o => {
+        if (o && o.id) {
+          const existing = map.get(o.id) || {};
+          map.set(o.id, Object.assign({}, existing, o));
+        }
+      });
+      return Array.from(map.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
+
     // Initialize View based on Auth
     if (authToken) {
       showDashboard();
@@ -1000,6 +1027,13 @@
     function showDashboard() {
       viewLogin.style.display = 'none';
       viewDashboard.style.display = 'flex';
+      // Instant render from local storage backup
+      const cached = getStoredOrders();
+      if (Array.isArray(cached) && cached.length > 0) {
+        rawOrders = cached;
+        updateMetrics();
+        renderOrders();
+      }
       loadOrders();
     }
 
@@ -1065,11 +1099,15 @@
 
         const data = await res.json();
         if (data.success && Array.isArray(data.orders)) {
-          if (rawOrders.length > 0 && data.orders.length > rawOrders.length) {
-            const diff = data.orders.length - rawOrders.length;
+          const previousCount = rawOrders.length;
+          // Smart merge ensures existing and new orders never vanish
+          rawOrders = mergeOrders(rawOrders, data.orders);
+          saveStoredOrders(rawOrders);
+
+          if (previousCount > 0 && rawOrders.length > previousCount) {
+            const diff = rawOrders.length - previousCount;
             showToast(`${diff} novo(s) pedido(s) recebido(s)!`, 'fa-bell', '#22c55e');
           }
-          rawOrders = data.orders;
           updateMetrics();
           renderOrders();
         }
@@ -1230,8 +1268,12 @@
                   ${order.paymentMethod || 'PIX'}
                 </span>
               </div>
-              <span class="badge ${isApproved ? 'badge-aprovado' : (order.paymentStatus === 'Pendente' ? 'badge-pendente' : '')}">
+              <span class="badge ${isApproved ? 'badge-aprovado' : (order.paymentStatus === 'Pendente' ? 'badge-pendente' : '')}"
+                    style="cursor: pointer;"
+                    onclick="setPaymentStatus('${order.id}', '${isApproved ? 'Pendente' : 'Aprovado'}')"
+                    title="Clique para alternar entre Aprovado e Pendente">
                 ${isApproved ? '<i class="fas fa-check"></i> Aprovado' : '<i class="fas fa-clock"></i> ' + (order.paymentStatus || 'Pendente')}
+                <i class="fas fa-sync-alt" style="font-size: 8.5px; margin-left: 4px; opacity: 0.7;"></i>
               </span>
             </td>
 
@@ -1249,6 +1291,15 @@
 
             <td style="text-align: right;">
               <div class="actions-cell" style="justify-content: flex-end;">
+                ${!isApproved ? `
+                  <button type="button" class="btn-action" 
+                    style="background: rgba(16, 185, 129, 0.18); color: #10b981; border: 1px solid rgba(16,185,129,0.5); font-weight: 600; padding: 6px 9px;"
+                    onclick="setPaymentStatus('${order.id}', 'Aprovado')"
+                    title="Confirmar que o cliente pagou e aprovar">
+                    <i class="fas fa-check"></i> Aprovar Pago
+                  </button>
+                ` : ''}
+
                 ${wppUrl ? `
                   <a href="${wppUrl}" target="_blank" class="btn-dispatch-wpp" title="Enviar Ingresso no WhatsApp">
                     <i class="fab fa-whatsapp" style="font-size: 14px;"></i> WhatsApp
@@ -1301,6 +1352,42 @@ Confirmamos o recebimento e aprovação do seu pedido! Seguem as informações d
 Qualquer dúvida ou suporte, basta responder esta mensagem. Tenha um excelente show! 🎶🙌`;
     }
 
+    // Toggle Payment Status (Aprovado / Pendente)
+    async function setPaymentStatus(orderId, newStatus) {
+      const target = rawOrders.find(o => o.id === orderId);
+      const oldStatus = target ? target.paymentStatus : 'Pendente';
+      if (target) {
+        target.paymentStatus = newStatus;
+        updateMetrics();
+        renderOrders();
+        saveStoredOrders(rawOrders);
+      }
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/orders`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            orderId,
+            paymentStatus: newStatus
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(newStatus === 'Aprovado' ? 'Pagamento Aprovado com sucesso!' : 'Status revertido para Pendente.', 'fa-check-circle', '#10b981');
+        } else {
+          if (target) target.paymentStatus = oldStatus;
+          updateMetrics();
+          renderOrders();
+          showToast(data.error || 'Erro ao atualizar pagamento.', 'fa-times', 'var(--danger)');
+        }
+      } catch (err) {
+        showToast('Erro de conexão ao salvar status.', 'fa-times', 'var(--danger)');
+      }
+    }
+
     // Toggle Ticket Status (Enviado / Pendente)
     async function toggleTicketStatus(orderId, newStatus) {
       try {
@@ -1323,6 +1410,7 @@ Qualquer dúvida ou suporte, basta responder esta mensagem. Tenha um excelente s
             target.ticketStatus = newStatus;
             if (newStatus === 'Enviado') target.ticketSentAt = new Date().toISOString();
           }
+          saveStoredOrders(rawOrders);
           updateMetrics();
           renderOrders();
           showToast(newStatus === 'Enviado' ? 'Ingresso marcado como enviado!' : 'Status revertido para pendente.');
