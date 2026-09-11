@@ -494,35 +494,74 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Helper to show inline errors in checkout modal
+  function showCheckoutError(msg, inputToFocus) {
+    const errorBox = document.getElementById('gw-checkout-pix-error');
+    const errorMsg = document.getElementById('gw-checkout-pix-error-msg');
+    if (errorBox && errorMsg) {
+      errorMsg.textContent = msg;
+      errorBox.style.display = 'block';
+    }
+    showToast(msg, 'fa-exclamation-circle');
+    if (inputToFocus) {
+      inputToFocus.style.borderColor = '#ef4444';
+      inputToFocus.focus();
+      const clearError = () => {
+        inputToFocus.style.borderColor = '';
+        if (errorBox) errorBox.style.display = 'none';
+        inputToFocus.removeEventListener('input', clearError);
+      };
+      inputToFocus.addEventListener('input', clearError);
+    }
+  }
+
   // Helper to validate common user fields
   function validateCustomerInfo() {
-    const nome = document.getElementById('gw-checkout-nome').value.trim();
-    const cpf = document.getElementById('gw-checkout-cpf').value.trim();
-    const email = document.getElementById('gw-checkout-email').value.trim();
-    const telefone = (document.getElementById('gw-checkout-telefone')?.value || '').trim();
-    const endereco = document.getElementById('gw-checkout-endereco').value.trim();
+    const errorBox = document.getElementById('gw-checkout-pix-error');
+    if (errorBox) errorBox.style.display = 'none';
 
-    if (!nome) {
-      showToast('Por favor, digite seu Nome Completo.', 'fa-exclamation-circle');
+    const nomeEl = document.getElementById('gw-checkout-nome');
+    const cpfEl = document.getElementById('gw-checkout-cpf');
+    const emailEl = document.getElementById('gw-checkout-email');
+    const telEl = document.getElementById('gw-checkout-telefone');
+    const endEl = document.getElementById('gw-checkout-endereco');
+
+    const nome = (nomeEl?.value || '').trim();
+    const cpf = (cpfEl?.value || '').trim();
+    const email = (emailEl?.value || '').trim();
+    let telefone = (telEl?.value || '').trim();
+    let endereco = (endEl?.value || '').trim();
+
+    if (!nome || nome.length < 3) {
+      showCheckoutError('Por favor, digite seu Nome Completo.', nomeEl);
       return null;
     }
+
     const cleanCpf = cpf.replace(/\D/g, '');
     if (cleanCpf.length !== 11) {
-      showToast('Por favor, informe um CPF válido com 11 dígitos.', 'fa-exclamation-circle');
+      showCheckoutError('Por favor, informe um CPF válido com 11 dígitos.', cpfEl);
       return null;
     }
-    if (!email || !email.includes('@')) {
-      showToast('Por favor, informe um e-mail válido.', 'fa-exclamation-circle');
+
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      showCheckoutError('Por favor, informe um e-mail válido para envio do ingresso.', emailEl);
       return null;
     }
-    const cleanPhone = telefone.replace(/\D/g, '');
+
+    let cleanPhone = telefone.replace(/\D/g, '');
+    if (cleanPhone.length === 8 || cleanPhone.length === 9) {
+      // Auto-prefix Brasília DDD 61 if omitted
+      cleanPhone = '61' + cleanPhone;
+    }
     if (!cleanPhone || cleanPhone.length < 10) {
-      showToast('Por favor, informe seu WhatsApp com DDD para envio do ingresso.', 'fa-exclamation-circle');
+      showCheckoutError('Por favor, informe seu WhatsApp com DDD para envio do ingresso.', telEl);
       return null;
     }
+
+    // Never block a purchase if address is blank (tickets are digital)
     if (!endereco) {
-      showToast('Por favor, informe seu Endereço Completo.', 'fa-exclamation-circle');
-      return null;
+      endereco = 'Brasília/DF - Digital';
+      if (endEl) endEl.value = endereco;
     }
 
     return { nome, cpf: cleanCpf, email, telefone: cleanPhone, endereco };
@@ -531,6 +570,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Submit PIX (MisticPay)
   if (generatePixBtn) {
     generatePixBtn.addEventListener('click', async () => {
+      const originalBtnHtml = generatePixBtn.innerHTML;
+
+      // Validate customer fields
       const customer = validateCustomerInfo();
       if (!customer) return;
 
@@ -545,15 +587,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      // Auto-fallback: if no ticket selected, pick 1st tier instead of halting
       if (totalItems === 0) {
-        showToast('Selecione ao menos 1 ingresso antes de prosseguir.', 'fa-exclamation-triangle');
-        return;
+        state.tickets.arq_superior_meia.qty = 1;
+        const numSpan = document.getElementById('qty-arq_superior_meia');
+        if (numSpan) numSpan.textContent = '1';
+        totalItems = 1;
+        subtotal = state.tickets.arq_superior_meia.price;
+        itemsList.push(`1x ${state.tickets.arq_superior_meia.name}`);
+        updateCart();
       }
 
       const fee = subtotal * state.serviceFeeRate;
       const finalTotal = Number((subtotal + fee).toFixed(2));
 
-      const originalBtnHtml = generatePixBtn.innerHTML;
       generatePixBtn.disabled = true;
       generatePixBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PIX MisticPay...';
 
@@ -572,11 +619,18 @@ document.addEventListener('DOMContentLoaded', () => {
           })
         });
 
-        const result = await response.json();
+        let result = {};
+        try {
+          result = await response.json();
+        } catch (jsonErr) {
+          result = { error: 'Falha ao processar resposta do servidor. Tente novamente.' };
+        }
 
-        if (response.ok && result.success && result.qrCodeBase64) {
+        const qrCodeSrc = result.qrCodeBase64 || result.qrcodeUrl;
+
+        if (response.ok && result.success && qrCodeSrc) {
           const qrImg = document.getElementById('gw-pix-qrcode-img');
-          if (qrImg) qrImg.src = result.qrCodeBase64;
+          if (qrImg) qrImg.src = qrCodeSrc;
           if (copyPixInput) copyPixInput.value = result.copyPaste || '';
 
           if (step1) step1.style.display = 'none';
@@ -601,7 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (result.orderId) {
             const currentOrderId = result.orderId;
             const pixPoller = setInterval(async () => {
-              if (step2.style.display === 'none') {
+              if (step2 && step2.style.display === 'none') {
                 clearInterval(pixPoller);
                 return;
               }
@@ -622,11 +676,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 4000);
           }
         } else {
-          showToast(result.error || 'Não foi possível gerar a cobrança PIX. Tente novamente.', 'fa-exclamation-triangle');
+          showCheckoutError(result.error || 'Não foi possível gerar a cobrança PIX na MisticPay. Verifique os dados ou tente novamente.');
         }
       } catch (err) {
-        console.error(err);
-        showToast('Erro de conexão ao comunicar com o servidor.', 'fa-times-circle');
+        console.error('Checkout error:', err);
+        showCheckoutError('Erro de conexão ao comunicar com o servidor. Tente novamente.');
       } finally {
         generatePixBtn.disabled = false;
         generatePixBtn.innerHTML = originalBtnHtml;

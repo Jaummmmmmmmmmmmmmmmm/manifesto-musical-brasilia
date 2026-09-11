@@ -711,7 +711,8 @@ const requestHandler = (req, res) => {
               qrcodeUrl: result.data.data.qrcodeUrl
             }
           };
-          await saveOrder(newOrder);
+          // Save order asynchronously so response is delivered instantly to customer
+          saveOrder(newOrder).catch(e => console.warn('Order save notice:', e.message));
 
           res.writeHead(200, { 'Content-Type': 'application/json' });
           return res.end(JSON.stringify({

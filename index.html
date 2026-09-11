@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <!-- Custom Styles with Cache Buster -->
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 
   <!-- Meta Pixel Code -->
   <script>
@@ -989,19 +989,25 @@
               <input type="tel" id="gw-checkout-telefone" class="gw-form-input" placeholder="(00) 90000-0000" maxlength="15" required autocomplete="tel">
             </div>
             <div class="gw-form-group">
-              <label for="gw-checkout-endereco">Endereço Completo *</label>
-              <input type="text" id="gw-checkout-endereco" class="gw-form-input" placeholder="Rua, Número, Bairro, Cidade/UF" required autocomplete="street-address">
+              <label for="gw-checkout-endereco">Cidade / UF ou Endereço</label>
+              <input type="text" id="gw-checkout-endereco" class="gw-form-input" placeholder="Ex: Brasília/DF" autocomplete="street-address">
             </div>
           </div>
 
           <!-- CONTAINER MÉTODO PIX (MISTICPAY) -->
           <div id="gw-pay-container-pix">
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #166534; display: flex; align-items: center; gap: 8px;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #166534; display: flex; align-items: center; gap: 8px;">
               <i class="fas fa-bolt" style="color: #16a34a; font-size: 16px;"></i>
               <span>Pagamento Instantâneo via <strong>PIX Oficial MisticPay</strong>. Aprovação automática em segundos.</span>
             </div>
 
-            <button type="button" class="gw-btn-primary" id="gw-btn-generate-pix" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">
+            <!-- INLINE ERROR BOX -->
+            <div id="gw-checkout-pix-error" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; font-weight: 600; text-align: left;">
+              <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
+              <span id="gw-checkout-pix-error-msg"></span>
+            </div>
+
+            <button type="button" class="gw-btn-primary" id="gw-btn-generate-pix" style="width: 100%; justify-content: center; padding: 13px; font-size: 15px;">
               <i class="fas fa-qrcode"></i> Gerar PIX e Concluir Pedido
             </button>
           </div>
@@ -1125,6 +1131,6 @@
   </div>
 
   <!-- Interactive Script with Cache Buster -->
-  <script src="js/app.js?v=4"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 </html>

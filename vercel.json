@@ -1,7 +1,15 @@
 {
   "functions": {
+    "api/**/*.js": {
+      "includeFiles": "**"
+    },
     "server.js": {
       "includeFiles": "**"
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/[...path].js" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/", "destination": "/admin.html" }
+  ]
 }
