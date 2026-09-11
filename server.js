@@ -146,10 +146,7 @@ async function getOrders() {
   try {
     const remote = await fetchRemoteOrders();
     if (Array.isArray(remote)) {
-      const map = new Map();
-      remote.forEach(o => { if (o && o.id) map.set(o.id, o); });
-      memoryOrders.forEach(o => { if (o && o.id && !map.has(o.id)) map.set(o.id, o); });
-      memoryOrders = Array.from(map.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      memoryOrders = remote.filter(o => o && o.id);
       return memoryOrders;
     }
   } catch (e) {}
